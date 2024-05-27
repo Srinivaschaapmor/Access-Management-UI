@@ -164,14 +164,21 @@ function Login() {
         if (response.data.jwt_token) {
           const jwtToken = response.data.jwt_token;
           Cookies.set("jwtToken", jwtToken, { expires: 1 / 12 });
-          navigate("/dashboard");
+          navigate("/dashboard/access-management");
           toast.success("Login successful!");
         } else {
           toast.error("Invalid OTP.");
         }
       } catch (error) {
-        console.error("Error verifying OTP:", error);
-        toast.error("An error occurred while verifying OTP. Please try again.");
+        console.log(error);
+        if (error.response && error.response.status === 403) {
+          toast.error("Access denied for this email address.");
+        } else {
+          console.error("Error verifying OTP:", error);
+          toast.error(
+            "An error occurred while verifying OTP. Please try again."
+          );
+        }
       }
     } else {
       toast.error("Please enter a valid OTP.");
@@ -191,7 +198,7 @@ function Login() {
   useEffect(() => {
     const token = Cookies.get("jwtToken");
     if (token !== undefined) {
-      navigate("/dashboard");
+      navigate("/dashboard/access-management");
     }
   });
   return (
@@ -260,6 +267,7 @@ function Login() {
                     ></TextField>
                     <Button
                       variant="contained"
+                      disabled={loginDetails.email.length === 0}
                       sx={{
                         width: 300,
                         m: "auto",

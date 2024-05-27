@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Checkbox,
-  Divider,
   Drawer,
   Grid,
   IconButton,
@@ -19,20 +18,22 @@ import {
 } from "@mui/material";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { useLocation } from "react-router-dom";
-import { rows } from "./UserData";
 import { CheckBox } from "@mui/icons-material";
+import axios from "axios";
+import { toast } from "react-toastify";
 
-function UserAccess({ open, onClose, selectedRow }) {
-  const path = useLocation();
-  const pathName = path.pathname;
-  const id = pathName.slice(pathName.lastIndexOf("/") + 1);
-  const filteredData = rows.filter((e) => e.EmpId === id);
-  const [areas, setAreas] = useState([]);
-  const [selectedAreas, setSelectedAreas] = useState([]);
-  const data = ["Ground Floor", "First Floor", "Second Floor", "Third Floor"];
-  const [filteredOptions, setFilteredOptions] = useState([]);
-
+function UserAccess({
+  open,
+  onClose,
+  selectedRow,
+  areas,
+  setAreas,
+  selectedAreas,
+  setSelectedAreas,
+  data,
+  filteredOptions,
+  setFilteredOptions,
+}) {
   useEffect(() => {
     if (selectedRow?.Access) {
       setAreas(selectedRow.Access);
@@ -48,14 +49,33 @@ function UserAccess({ open, onClose, selectedRow }) {
     setSelectedAreas(value);
   };
 
-  const handleAddAreas = () => {
-    setAreas((prevAreas) => [...prevAreas, ...selectedAreas]);
-    setSelectedAreas([]);
+  const handleAddAreas = async () => {
+    try {
+      // Make sure to replace 'empid' with the actual EmpId of the user
+      const empid = selectedRow?.EmpId; // Assuming userData contains EmpId of the user
+      if (!empid) {
+        console.error("EmpId is missing.");
+        return;
+      }
+
+      const response = await axios.post(
+        `http://127.0.0.1:5000/users/update/access/${empid}`,
+        { areas: selectedAreas }
+      );
+
+      toast.success("Access   Updated Succesfully");
+
+      // Perform any additional actions after successful update, if needed
+    } catch (error) {
+      toast.error("Error updating access areas");
+      // Handle error, if needed
+    }
   };
 
   const handleDeleteArea = (area) => {
     setAreas((prevAreas) => prevAreas.filter((a) => a !== area));
   };
+
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
       <Box width={500} height={"100vh"}>
@@ -114,7 +134,6 @@ function UserAccess({ open, onClose, selectedRow }) {
               </Stack>
             </Grid>
           </Grid>
-          {/* <Divider sx={{ py: 2 }}></Divider> */}
           {filteredOptions.length === 0 ? null : (
             <Box px={3} py={2}>
               <Autocomplete
@@ -126,12 +145,7 @@ function UserAccess({ open, onClose, selectedRow }) {
                 getOptionLabel={(option) => option}
                 renderOption={(props, option, { selected }) => (
                   <li {...props}>
-                    <Checkbox
-                      // icon={<CheckBox />}
-                      // checkedIcon={<CheckBox checked />}
-                      style={{ marginRight: 8 }}
-                      // checked={selected}
-                    />
+                    <Checkbox style={{ marginRight: 8 }} />
                     {option}
                   </li>
                 )}
@@ -146,7 +160,14 @@ function UserAccess({ open, onClose, selectedRow }) {
                 )}
               />
               <Stack direction={"row"} justifyContent={"flex-end"} mt={2}>
-                <Button variant="contained" onClick={handleAddAreas}>
+                <Button
+                  variant="contained"
+                  onClick={handleAddAreas}
+                  sx={{
+                    bgcolor: "rgb(207, 237, 231)",
+                    color: "rgb(67, 167, 111)",
+                  }}
+                >
                   Add Areas
                 </Button>
               </Stack>
@@ -157,7 +178,6 @@ function UserAccess({ open, onClose, selectedRow }) {
               sx={{
                 mt: 1,
                 boxShadow: "0px 0px 10px 0px rgba(0,0,0,0.1)",
-                // border: "1px solid grey",
                 borderRadius: 2,
                 ".css-xn32gr-MuiTableCell-root": { textAlign: "center" },
                 ".css-1ex1afd-MuiTableCell-root": { textAlign: "center" },

@@ -13,11 +13,11 @@ const Router = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Login />} />
         <Route path="/" element={<ProtectedRoute />}>
           {" "}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/user-access-settings/:id" element={<UserAccess />} />
+          <Route path="/dashboard/access-management" element={<Dashboard />} />
+          {/* <Route path="/user-access-settings/:id" element={<UserAccess />} /> */}
         </Route>
 
         <Route path="*" element={<p>Invalid Path</p>} />

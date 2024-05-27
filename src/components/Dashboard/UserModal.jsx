@@ -2,9 +2,13 @@ import { Height } from "@mui/icons-material";
 import {
   Box,
   Button,
+  FormControl,
   FormLabel,
   Grid,
+  InputLabel,
+  MenuItem,
   Modal,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
@@ -42,7 +46,7 @@ function EmployeeModal({
           User Details
         </Typography>
         <form
-          onSubmit={handleSubmit}
+          // onSubmit={handleSubmit}
           style={{ width: "100%", marginTop: "30px" }}
         >
           <Grid container spacing={2}>
@@ -255,19 +259,27 @@ function EmployeeModal({
               </FormLabel>
             </Grid>
             <Grid item xs={9}>
-              <TextField
-                name="EmployeeType"
-                value={userData.EmployeeType}
-                onChange={handleChange}
-                size="small"
-                fullWidth
-                InputProps={{
-                  sx: {
-                    fontSize: "14px",
-                  },
-                  placeholder: "Enter employer type",
-                }}
-              />
+              <FormControl fullWidth size="small">
+                <InputLabel
+                  id="demo-simple-select-label"
+                  style={{ color: "rgb(188, 188, 188)", fontSize: 14 }}
+                >
+                  Select Employment Type
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={userData.EmployeeType}
+                  onChange={handleChange}
+                  label="  Select Employment Type"
+                  name="EmployeeType"
+                >
+                  <MenuItem value={"Full Time"}>Full Time</MenuItem>
+                  <MenuItem value={"Part Time"}>Part Time</MenuItem>
+                  <MenuItem value={"Internship"}>Internship</MenuItem>
+                  <MenuItem value={"Contract"}>Contract</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
 
             {/* Department */}
@@ -287,19 +299,27 @@ function EmployeeModal({
               </FormLabel>
             </Grid>
             <Grid item xs={9}>
-              <TextField
-                name="SpaceName"
-                value={userData.SpaceName}
-                onChange={handleChange}
-                size="small"
-                fullWidth
-                InputProps={{
-                  sx: {
-                    fontSize: "14px",
-                  },
-                  placeholder: "Enter department",
-                }}
-              />
+              <FormControl fullWidth size="small">
+                <InputLabel
+                  id="demo-simple-select-label"
+                  style={{ color: "rgb(188, 188, 188)", fontSize: 14 }}
+                >
+                  Select Department
+                </InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={userData.SpaceName}
+                  onChange={handleChange}
+                  label="Select Department"
+                  name="SpaceName"
+                >
+                  <MenuItem value={"Full Stack Developer"}>Full Stack</MenuItem>
+                  <MenuItem value={"Hr"}>HR</MenuItem>
+                  <MenuItem value={"Quality Assurance"}>Testing</MenuItem>
+                  <MenuItem value={"AI-ML"}>AI-ML</MenuItem>
+                </Select>
+              </FormControl>
             </Grid>
           </Grid>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -314,8 +334,9 @@ function EmployeeModal({
             <Button
               variant="contained"
               color="primary"
-              type="submit"
+              // type="submit"
               sx={{ mt: 2, textAlign: "center", fontSize: 12 }}
+              onClick={handleSubmit}
             >
               Submit
             </Button>

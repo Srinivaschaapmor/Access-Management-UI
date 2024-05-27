@@ -46,18 +46,19 @@ function Header() {
   const id = canBeOpen ? "transition-popper" : undefined;
   return (
     <Stack
-      direction={"row"}
-      alignItems={"center"}
-      justifyContent={"space-between"}
+      // direction={"row"}
+      // alignItems={"center"}
+      // justifyContent={"space-between"}
+      sx={{ pt: 5, pb: 5 }}
     >
       <Stack>
-        <img src={Logo} width={110} alt="Logo"></img>
-        <Typography fontSize={9} fontWeight={600}>
+        <img src={Logo} width={130} alt="Logo"></img>
+        {/* <Typography fontSize={9} fontWeight={600}>
           LOGO TECHNOLOGIES
-        </Typography>
+        </Typography> */}
       </Stack>
 
-      <Stack direction={"row"} gap={2}>
+      {/* <Stack direction={"row"} gap={2}>
         <Box>
           <Avatar onClick={handleClick} sx={{ cursor: "pointer" }}>
             H
@@ -78,7 +79,7 @@ function Header() {
             </Box>
           </Popper>
         </Box>
-      </Stack>
+      </Stack> */}
     </Stack>
   );
 }

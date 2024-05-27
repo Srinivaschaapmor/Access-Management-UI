@@ -8,9 +8,9 @@ const ProtectedRoute = () => {
 
   useEffect(() => {
     if (token === undefined) {
-      navigate("/login");
+      navigate("/");
     } else if (window.location.pathname === "/login") {
-      navigate("/dashboard");
+      navigate("/dashboard/access-management");
     }
   }, [navigate, token]);
 

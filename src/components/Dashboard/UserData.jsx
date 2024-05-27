@@ -1,104 +1,93 @@
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   IconButton,
   Stack,
+  Typography,
+  Tab,
+  Tabs,
+  Avatar,
+  Badge,
+  Menu,
+  MenuItem,
+  Popper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Divider,
 } from "@mui/material";
-import React, { useState } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import EditIcon from "@mui/icons-material/Edit";
-import { makeStyles } from "@mui/styles";
-import UserAccess from "./UserAccess";
+import AddIcon from "@mui/icons-material/Add";
+import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import SearchIcon from "@mui/icons-material/Search";
+import Cookies from "js-cookie";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
-export const rows = [
-  {
-    id: 1,
-    EmpId: "1001",
-    FirstName: "John",
-    LastName: "Doe",
-    Contact: "+1234567890",
-    Email: "john.doe@example.com",
-    SpaceName: "Marketing",
-    EmployeeType: "Full-Time",
-    Access: ["Ground Floor", "First Floor"],
-  },
-  {
-    id: 2,
-    EmpId: "1002",
-    FirstName: "Jane",
-    LastName: "Smith",
-    Contact: "+1987654321",
-    Email: "jane.smith@example.com",
-    SpaceName: "Human Resources",
-    EmployeeType: "Part-Time",
-    Access: ["Ground Floor", "First Floor", "Second Floor", "Third Floor"],
-  },
-  {
-    id: 3,
-    EmpId: "1003",
-    FirstName: "Michael",
-    LastName: "Johnson",
-    Contact: "+1122334455",
-    Email: "michael.johnson@example.com",
-    SpaceName: "Finance",
-    EmployeeType: "Contractor",
-    Access: ["Second Floor", "Third Floor"],
-  },
-  {
-    id: 4,
-    EmpId: "1004",
-    FirstName: "Emily",
-    LastName: "Brown",
-    Contact: "+1443322111",
-    Email: "emily.brown@example.com",
-    SpaceName: "IT",
-    EmployeeType: "Full-Time",
-    Access: [],
-  },
-  {
-    id: 5,
-    EmpId: "1005",
-    FirstName: "David",
-    LastName: "Wilson",
-    Contact: "+1777888999",
-    Email: "david.wilson@example.com",
-    SpaceName: "Operations",
-    EmployeeType: "Intern",
-    Access: [],
-  },
-  {
-    id: 6,
-    EmpId: "1005",
-    FirstName: "David",
-    LastName: "Wilson",
-    Contact: "+1777888999",
-    Email: "david.wilson@example.com",
-    SpaceName: "Operations",
-    EmployeeType: "Intern",
-    Access: [],
-  },
-  {
-    id: 7,
-    EmpId: "1005",
-    FirstName: "David",
-    LastName: "Wilson",
-    Contact: "+1777888999",
-    Email: "david.wilson@example.com",
-    SpaceName: "Operations",
-    EmployeeType: "Intern",
-    Access: [],
-  },
-];
-function UserData({ handleModalOpen, userData, setUserData }) {
+import UserAccess from "./UserAccess";
+import { FaRegTrashCan } from "react-icons/fa6";
+function UserData({
+  handleModalOpen,
+  userData,
+  setUserData,
+  areas,
+  setAreas,
+  selectedAreas,
+  setSelectedAreas,
+  data,
+  filteredOptions,
+  setFilteredOptions,
+}) {
   const [deleteModalopen, setDeleteModalOpen] = useState(false);
+  const [rows, setRows] = useState([]);
+  const [filteredRows, setFilteredRows] = useState([]);
+  const [selectedSpaceName, setSelectedSpaceName] = useState("All");
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [openPopper, setOpenPopper] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Fetch data from the API
+    axios
+      .get("http://127.0.0.1:5000/endusers")
+      .then((response) => {
+        const dataWithId = response.data.map((item, index) => ({
+          ...item,
+          id: item?.EmpId, // assuming EmpId is unique for each user
+        }));
+        setRows(dataWithId);
+        setFilteredRows(dataWithId); // Initially display all rows
+      })
+      .catch((error) => {
+        console.error("Error fetching user data:", error);
+      });
+  }, []);
+  console.log("rows", rows);
+  const handleTabChange = (event, newValue) => {
+    setSelectedSpaceName(newValue);
+    if (newValue === "All") {
+      setFilteredRows(rows);
+    } else {
+      const filtered = rows.filter((row) => row.SpaceName === newValue);
+      setFilteredRows(filtered);
+    }
+  };
+
+  const handleRowClick = (rowData) => {
+    const filteredData = rows.find((i) => i.id === rowData.id);
+    setSelectedRow(filteredData);
+    setOpenDrawer(true);
+  };
 
   const handleClickOpen = () => {
     setDeleteModalOpen(true);
@@ -111,112 +100,80 @@ function UserData({ handleModalOpen, userData, setUserData }) {
   const handleDelete = () => {
     // Add your delete logic here
     console.log("User deleted");
-    setOpen(false);
-  };
-  const navigate = useNavigate();
-  const [selectedRow, setSelectedRow] = useState(null);
-  const [openDrawer, setOpenDrawer] = useState(false);
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-  const toggleDrawer = (newOpen) => () => {
-    setOpen(newOpen);
+    setDeleteModalOpen(false);
   };
 
-  const handleRowClick = (rowData) => {
-    const filteredData = rows.find((i) => i.id === rowData.id);
-
-    setSelectedRow(filteredData);
-    setOpenDrawer(true);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+    setOpenPopper((previousOpen) => !previousOpen);
   };
+
+  const handlePopperClose = () => {
+    setOpenPopper(false);
+  };
+
+  const handleLogout = () => {
+    // Implement your logout logic here
+    Cookies.remove("jwtToken");
+    Cookies.remove("userEmail");
+    navigate("/");
+    console.log("Logged out");
+    handlePopperClose();
+  };
+
+  const canBeOpen = openPopper && Boolean(anchorEl);
+  const id = canBeOpen ? "transition-popper" : undefined;
 
   const columns = [
+    { field: "EmpId", headerName: "Emp ID", width: 110 },
     {
-      field: "EmpId",
-      headerName: "Employee ID",
-
-      width: 110,
-    },
-    {
-      field: "FirstName",
-      headerName: "First Name",
-      width: 150,
-    },
-    {
-      field: "LastName",
-      headerName: "Last Name",
-      width: 150,
-    },
-    {
-      field: "Contact",
-      headerName: "Mobile Number",
-      width: 150,
-    },
-    {
-      field: "Email",
-      headerName: "Email",
-      type: "Email",
+      field: "FullName",
+      headerName: "Full Name",
       width: 250,
+      renderCell: (params) => {
+        const { LastName, FirstName, Email } = params.row;
+        return (
+          <Box mt={2}>
+            <Typography color={"rgb(33, 43, 54)"}>
+              {FirstName} {LastName}
+            </Typography>
+            <Typography sx={{ fontSize: 14, color: "rgb(163, 174, 185)" }}>
+              {Email}
+            </Typography>
+          </Box>
+        );
+      },
     },
+    { field: "Contact", headerName: "Mobile Number", width: 190 },
     {
       field: "access",
       headerName: "Access",
       width: 150,
-      renderCell: (params) => {
-        // Check if params.row contains the correct data
-
-        return (
-          <Stack direction={"row"} alignItems={"center"}>
-            <Button
-              // toggleDrawer(true);
-              // onClick={() => {
-              //   // handleOpen();
-              //   setSelectedRow(params.row);
-              //   navigate(`/user-access-settings/${params.row.EmpId}`);
-              // }}
-              onClick={() => handleRowClick(params.row)}
-              // handleRowClick(params.row);
-              // navigate(`/user-access-settings/${params.row.id}`);
-
-              sx={{
-                ":hover": { backgroundColor: "none" },
-                fontSize: 12,
-                mt: 1,
-                textTransform: "capitalize",
-              }}
-            >
-              View Access
-            </Button>
-            <ArrowOutwardIcon
-              sx={{ fontSize: 14, color: "rgb(38, 126, 212)" }}
-            />
-          </Stack>
-        );
-      },
+      renderCell: (params) => (
+        <Stack direction={"row"} alignItems={"center"} mt={2} mr={10} gap={1}>
+          <Button
+            onClick={() => handleRowClick(params.row)}
+            sx={{
+              ":hover": { backgroundColor: "none" },
+              fontSize: 12,
+              mt: 1,
+              textTransform: "capitalize",
+              color: "rgb(135, 79, 224)",
+            }}
+          >
+            View Access
+          </Button>
+          <ArrowOutwardIcon sx={{ fontSize: 14, color: "rgb(135, 79, 224)" }} />
+        </Stack>
+      ),
     },
-
     {
       field: "Actions",
       headerName: "Actions",
-
       width: 130,
       renderCell: (params) => (
         <Box>
-          <Stack
-            direction={"row"}
-            // gap={1}
-            // alignItems={"center"}
-            // justifyContent={"center"}
-            mt={1}
-            gap={1}
-          >
-            {/* <IconButton
-              aria-label="edit"
-              size="small"
-              onClick={handleModalOpen}
-            >
-              <VisibilityOutlinedIcon sx={{ fontSize: "19px" }} />
-            </IconButton> */}
+          <Stack direction={"row"} mt={2} gap={1}>
             <IconButton
               aria-label="edit"
               size="small"
@@ -227,15 +184,14 @@ function UserData({ handleModalOpen, userData, setUserData }) {
             >
               <EditIcon sx={{ fontSize: "19px" }} />
             </IconButton>
-            <IconButton onClick={handleClickOpen}>
-              <DeleteOutlineOutlinedIcon
+            <IconButton onClick={handleClickOpen} sx={{ width: "32px" }}>
+              <FaRegTrashCan
                 sx={{
-                  fontSize: "19px",
+                  fontSize: "15px",
                   mt: 0.5,
-
-                  // color: "red",
                   color: "grey",
                   cursor: "pointer",
+                  width: "31px  ",
                 }}
               />
             </IconButton>
@@ -245,73 +201,169 @@ function UserData({ handleModalOpen, userData, setUserData }) {
     },
   ];
 
+  const spaceNames = ["All", ...new Set(rows?.map((row) => row?.SpaceName))];
+  const userEmail = Cookies.get("userEmail");
+  const username = userEmail.split("@")[0];
+  console.log(username, "username");
   return (
-    <Box
-      sx={{
-        width: "93%",
-        margin: "auto",
-        backgroundColor: "white",
-        p: 4,
-        borderRadius: 3,
-        pt: 2,
-      }}
-    >
-      <Button
-        variant="contained"
-        sx={{
-          fontSize: 12,
-          float: "right",
-          backgroundColor: "rgb(5, 111, 224)",
-          mb: 2,
-        }}
-        onClick={handleModalOpen}
-      >
-        Add User
-      </Button>
-      <DataGrid
+    <Box>
+      <Box display="flex" justifyContent="space-between" alignItems={"center"}>
+        <SearchIcon sx={{ color: "rgb(138, 138, 138)" }} />
+        <Stack direction={"row"} gap={3} alignItems={"center"}>
+          <Stack direction={"row"}>
+            <Badge
+              badgeContent={2}
+              sx={{
+                "& .MuiBadge-badge": {
+                  backgroundColor: "rgb(33, 175, 150)",
+                  color: "white",
+                },
+              }}
+            >
+              <NotificationsNoneOutlinedIcon color="action" />
+            </Badge>
+          </Stack>
+          <SettingsOutlinedIcon sx={{ color: "rgb(112, 113, 114)" }} />
+          <Stack direction={"row"} gap={2}>
+            <Box>
+              <Avatar onClick={handleClick} sx={{ cursor: "pointer" }}></Avatar>
+              <Popper id={id} open={openPopper} anchorEl={anchorEl}>
+                <Box>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={openPopper}
+                    onClose={handlePopperClose}
+                    onClick={handlePopperClose}
+                    sx={{ p: 2 }}
+                  >
+                    <MenuItem
+                      sx={{
+                        borderBottom: "1px solid rgb(244, 246, 248)",
+                        mb: 1,
+                      }}
+                    >
+                      <Stack direction={"row"} alignItems={"center"} gap={2}>
+                        <Avatar></Avatar>
+                        <Typography>{username}</Typography>
+                      </Stack>
+                    </MenuItem>
+                    <MenuItem>Account Settings</MenuItem>
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                  </Menu>
+                </Box>
+              </Popper>
+            </Box>
+          </Stack>
+        </Stack>
+      </Box>
+      <Box
         sx={{
           width: "100%",
           margin: "auto",
-          border: "1px solid rgb(227, 227, 227)",
-          ".css-t89xny-MuiDataGrid-columnHeaderTitle": {
-            fontWeight: 700,
-          },
+          p: 4,
+          borderRadius: 3,
+          mt: 1,
         }}
-        rows={rows}
-        columns={columns}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 5,
+      >
+        <Stack direction={"row"} justifyContent={"space-between"}>
+          <Box>
+            <Typography variant="h6" fontWeight={700}>
+              User Access Management
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            sx={{
+              ":hover": { bgcolor: "rgb(69, 79, 91)" },
+              fontSize: 12,
+              backgroundColor: "rgb(30, 34, 40)",
+              mb: 5,
+              boxShadow: 0,
+            }}
+            onClick={handleModalOpen}
+          >
+            <AddIcon sx={{ mr: 1 }} />
+            Add User
+          </Button>
+        </Stack>
+        <Box height={50} bgcolor={"white"} pl={2}>
+          <Tabs
+            value={selectedSpaceName}
+            onChange={handleTabChange}
+            aria-label="simple tabs example"
+            sx={{
+              minHeight: 50,
+              height: 50,
+              ".css-1aquho2-MuiTabs-indicator": { bgcolor: "rgb(30, 34, 40)" },
+              ".css-1p9i4sw-MuiButtonBase-root-MuiTab-root.Mui-selected ": {
+                color: "black",
+              },
+            }}
+          >
+            {spaceNames?.map((space) => (
+              <Tab
+                key={space}
+                value={space}
+                sx={{
+                  textTransform: "capitalize",
+                }}
+                label={space}
+              />
+            ))}
+          </Tabs>
+        </Box>
+        <DataGrid
+          rowHeight={80}
+          getRowId={(row) => row.EmpId}
+          sx={{
+            width: "100%",
+            margin: "auto",
+            bgcolor: "white",
+            p: 2,
+            borderRadius: "0px 2px 2px 2px",
+            boxShadow: "0 2px 2px rgba(0, 0, 0, 0.1)",
+            border: "1px solid rgb(227, 227, 227)",
+            ".css-t89xny-MuiDataGrid-columnHeaderTitle": { fontWeight: 700 },
+          }}
+          rows={filteredRows}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 5 },
             },
-          },
-        }}
-        pageSizeOptions={[5]}
-        // checkboxSelection
-        disableRowSelectionOnClick
-      />
-      <UserAccess
-        // toggleDrawer={toggleDrawer}
-        open={openDrawer}
-        onClose={() => setOpenDrawer(false)}
-        selectedRow={selectedRow}
-      />
-      <Dialog open={deleteModalopen} onClose={handleDeleteClose}>
-        <DialogTitle>{"Confirm Deletion"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this user?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleDelete} color="primary" autoFocus>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+          }}
+          pageSizeOptions={[5]}
+          disableRowSelectionOnClick
+        />
+        <UserAccess
+          open={openDrawer}
+          onClose={() => setOpenDrawer(false)}
+          selectedRow={selectedRow}
+          areas={areas}
+          setAreas={setAreas}
+          selectedAreas={selectedAreas}
+          setSelectedAreas={setSelectedAreas}
+          data={data}
+          filteredOptions={filteredOptions}
+          setFilteredOptions={setFilteredOptions}
+        />
+        <Dialog open={deleteModalopen} onClose={handleDeleteClose}>
+          <DialogTitle>{"Confirm Deletion"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to delete this user?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleDeleteClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleDelete} color="primary" autoFocus>
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
     </Box>
   );
 }
