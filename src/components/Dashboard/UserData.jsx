@@ -25,14 +25,13 @@ import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined
 import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import EditIcon from "@mui/icons-material/Edit";
 import AddIcon from "@mui/icons-material/Add";
-import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import SearchIcon from "@mui/icons-material/Search";
+
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import UserAccess from "./UserAccess";
 import { FaRegTrashCan } from "react-icons/fa6";
+import MainHeader from "../MainHeader";
 function UserData({
   handleModalOpen,
   userData,
@@ -52,8 +51,7 @@ function UserData({
   const [selectedRow, setSelectedRow] = useState(null);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [open, setOpen] = useState(false);
-  const [openPopper, setOpenPopper] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -102,27 +100,6 @@ function UserData({
     console.log("User deleted");
     setDeleteModalOpen(false);
   };
-
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-    setOpenPopper((previousOpen) => !previousOpen);
-  };
-
-  const handlePopperClose = () => {
-    setOpenPopper(false);
-  };
-
-  const handleLogout = () => {
-    // Implement your logout logic here
-    Cookies.remove("jwtToken");
-    Cookies.remove("userEmail");
-    navigate("/");
-    console.log("Logged out");
-    handlePopperClose();
-  };
-
-  const canBeOpen = openPopper && Boolean(anchorEl);
-  const id = canBeOpen ? "transition-popper" : undefined;
 
   const columns = [
     { field: "EmpId", headerName: "Emp ID", width: 110 },
@@ -202,60 +179,10 @@ function UserData({
   ];
 
   const spaceNames = ["All", ...new Set(rows?.map((row) => row?.SpaceName))];
-  const userEmail = Cookies.get("userEmail");
-  const username = userEmail.split("@")[0];
-  console.log(username, "username");
+
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems={"center"}>
-        <SearchIcon sx={{ color: "rgb(138, 138, 138)" }} />
-        <Stack direction={"row"} gap={3} alignItems={"center"}>
-          <Stack direction={"row"}>
-            <Badge
-              badgeContent={2}
-              sx={{
-                "& .MuiBadge-badge": {
-                  backgroundColor: "rgb(33, 175, 150)",
-                  color: "white",
-                },
-              }}
-            >
-              <NotificationsNoneOutlinedIcon color="action" />
-            </Badge>
-          </Stack>
-          <SettingsOutlinedIcon sx={{ color: "rgb(112, 113, 114)" }} />
-          <Stack direction={"row"} gap={2}>
-            <Box>
-              <Avatar onClick={handleClick} sx={{ cursor: "pointer" }}></Avatar>
-              <Popper id={id} open={openPopper} anchorEl={anchorEl}>
-                <Box>
-                  <Menu
-                    anchorEl={anchorEl}
-                    open={openPopper}
-                    onClose={handlePopperClose}
-                    onClick={handlePopperClose}
-                    sx={{ p: 2 }}
-                  >
-                    <MenuItem
-                      sx={{
-                        borderBottom: "1px solid rgb(244, 246, 248)",
-                        mb: 1,
-                      }}
-                    >
-                      <Stack direction={"row"} alignItems={"center"} gap={2}>
-                        <Avatar></Avatar>
-                        <Typography>{username}</Typography>
-                      </Stack>
-                    </MenuItem>
-                    <MenuItem>Account Settings</MenuItem>
-                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                  </Menu>
-                </Box>
-              </Popper>
-            </Box>
-          </Stack>
-        </Stack>
-      </Box>
+      <MainHeader />
       <Box
         sx={{
           width: "100%",
@@ -283,10 +210,10 @@ function UserData({
             onClick={handleModalOpen}
           >
             <AddIcon sx={{ mr: 1 }} />
-            Add User
+            Add Access
           </Button>
         </Stack>
-        <Box height={50} bgcolor={"white"} pl={2}>
+        <Box height={50} bgcolor={"white"} pl={2} mt={3}>
           <Tabs
             value={selectedSpaceName}
             onChange={handleTabChange}
@@ -334,6 +261,7 @@ function UserData({
           }}
           pageSizeOptions={[5]}
           disableRowSelectionOnClick
+          checkboxSelection
         />
         <UserAccess
           open={openDrawer}

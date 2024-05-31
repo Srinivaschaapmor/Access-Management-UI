@@ -155,15 +155,17 @@ function Login() {
     if (Object.entries(formErrors).length === 0) {
       try {
         const response = await axios.post(
-          "http://127.0.0.1:5000/login/verify_otp",
+          "http://127.0.0.1:5000/login/verify-otp",
           {
             otp: loginDetails.otp,
             email: loginDetails.email,
           }
         );
         if (response.data.jwt_token) {
+          const useremail = response.data.userEmail;
           const jwtToken = response.data.jwt_token;
           Cookies.set("jwtToken", jwtToken, { expires: 1 / 12 });
+          Cookies.set("UserEmail", useremail);
           navigate("/dashboard/access-management");
           toast.success("Login successful!");
         } else {

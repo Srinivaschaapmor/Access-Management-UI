@@ -5,6 +5,8 @@ import Login from "./components/Login/Login";
 import Dashboard from "./components/Dashboard/Dashboard";
 import ProtectedRoute from "./protectedLayout";
 import UserAccess from "./components/Dashboard/UserAccess";
+import LoginCallback from "./components/Login/LoginCallback";
+import ListOfUsers from "./components/ListOfUsers/ListOfUsers";
 // import Data from "./Data/Data";
 // import { Json } from "./dataFolder";
 
@@ -14,9 +16,11 @@ const Router = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
+        <Route path="/login" element={<LoginCallback />} />
         <Route path="/" element={<ProtectedRoute />}>
           {" "}
           <Route path="/dashboard/access-management" element={<Dashboard />} />
+          <Route path="/dashboard/users-list" element={<ListOfUsers />}></Route>
           {/* <Route path="/user-access-settings/:id" element={<UserAccess />} /> */}
         </Route>
 
