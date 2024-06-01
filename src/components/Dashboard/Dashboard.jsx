@@ -25,7 +25,7 @@ function Dashboard() {
   const location = useLocation();
   const [department, setDepartment] = React.useState("");
   const [areas, setAreas] = useState([]);
-
+  const [selectedAreas, setSelectedAreas] = useState([]);
   const data = ["Ground Floor", "First Floor", "Second Floor", "Third Floor"];
   const [filteredOptions, setFilteredOptions] = useState([]);
 
@@ -41,8 +41,8 @@ function Dashboard() {
             // setUserData={setUserData}
             areas={areas}
             setAreas={setAreas}
-            // selectedAreas={selectedAreas}
-            // setSelectedAreas={setSelectedAreas}
+            selectedAreas={selectedAreas}
+            setSelectedAreas={setSelectedAreas}
             data={data}
             filteredOptions={filteredOptions}
             setFilteredOptions={setFilteredOptions}

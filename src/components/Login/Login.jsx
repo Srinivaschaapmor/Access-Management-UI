@@ -22,6 +22,12 @@ import { TroubleshootOutlined } from "@mui/icons-material";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { loginEmail } from "../../apiCalls/Apicalls";
+import {
+  Routes,
+  Route,
+  useSearchParams,
+  BrowserRouter,
+} from "react-router-dom";
 function Login() {
   const [formErrors, setFormErrors] = useState({});
   const [isSubmit, setIssubmit] = useState(false);
@@ -32,6 +38,7 @@ function Login() {
     email: "",
     otp: "",
   });
+  const [queryParameters] = useSearchParams();
 
   const handleEmailChange = (e) => {
     const { name, value } = e.target;
@@ -164,10 +171,15 @@ function Login() {
         if (response.data.jwt_token) {
           const useremail = response.data.userEmail;
           const jwtToken = response.data.jwt_token;
+          const redirect_uri = queryParameters.get("redirect_uri");
+          const access = response.data.access;
+          console.log(redirect_uri);
           Cookies.set("jwtToken", jwtToken, { expires: 1 / 12 });
-          Cookies.set("UserEmail", useremail);
-          navigate("/dashboard/access-management");
-          toast.success("Login successful!");
+          Cookies.set("userEmail", useremail);
+          Cookies.set("access", JSON.stringify(access));
+          window.location.href = decodeURIComponent(redirect_uri);
+          // navigate("/dashboard/access-management");
+          // toast.success("Login successful!");
         } else {
           toast.error("Invalid OTP.");
         }
@@ -199,7 +211,7 @@ function Login() {
 
   useEffect(() => {
     const token = Cookies.get("jwtToken");
-    if (token !== undefined) {
+    if (token !== undefined && !queryParameters.get("redirect_uri")) {
       navigate("/dashboard/access-management");
     }
   });

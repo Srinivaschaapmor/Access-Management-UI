@@ -21,6 +21,7 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import { CheckBox } from "@mui/icons-material";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie";
 
 function UserAccess({
   open,
@@ -57,10 +58,18 @@ function UserAccess({
         console.error("EmpId is missing.");
         return;
       }
+      // console.log("COOKIE: ", Cookies.get("jwtToken"));
+      let config = {
+        headers: {
+          "Authorization": Cookies.get("jwtToken"),
+          "Content-Type": "application/json",
+        }
+      }
 
-      const response = await axios.post(
+      const response = await axios.put(
         `http://127.0.0.1:5000/users/update/access/${empid}`,
-        { areas: selectedAreas }
+        { Access: selectedAreas },
+        config
       );
 
       toast.success("Access   Updated Succesfully");
