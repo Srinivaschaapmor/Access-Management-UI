@@ -34,6 +34,7 @@ function UserAccess({
   data,
   filteredOptions,
   setFilteredOptions,
+  fetchEndUsersWithAccess,
 }) {
   useEffect(() => {
     if (selectedRow?.Access) {
@@ -61,20 +62,19 @@ function UserAccess({
       // console.log("COOKIE: ", Cookies.get("jwtToken"));
       let config = {
         headers: {
-          "Authorization": Cookies.get("jwtToken"),
+          Authorization: Cookies.get("jwtToken"),
           "Content-Type": "application/json",
-        }
-      }
+        },
+      };
 
       const response = await axios.put(
         `http://127.0.0.1:5000/users/update/access/${empid}`,
         { Access: selectedAreas },
         config
       );
-
-      toast.success("Access   Updated Succesfully");
-
-      // Perform any additional actions after successful update, if needed
+      // refresh table rows
+      fetchEndUsersWithAccess();
+      toast.success("Access Updated Succesfully");
     } catch (error) {
       toast.error("Error updating access areas");
       // Handle error, if needed

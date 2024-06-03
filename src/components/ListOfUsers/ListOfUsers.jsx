@@ -19,6 +19,8 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
 import { FaRegTrashCan } from "react-icons/fa6";
 import { DataGrid } from "@mui/x-data-grid";
+import Cookies from "js-cookie";
+
 function ListOfUsers() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
@@ -34,8 +36,8 @@ function ListOfUsers() {
   };
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
-  useEffect(() => {
-    // Fetch data from the API
+
+  function fetchUsers() {
     axios
       .get("http://127.0.0.1:5000/endusers")
       .then((response) => {
@@ -49,6 +51,11 @@ function ListOfUsers() {
       .catch((error) => {
         console.error("Error fetching user data:", error);
       });
+  }
+
+  useEffect(() => {
+    // Fetch data from the API
+    fetchUsers();
   }, []);
   const [modalOpen, setModelOpen] = useState(false);
   const handleModalOpen = () => setModelOpen(true);
@@ -85,14 +92,25 @@ function ListOfUsers() {
         );
         // console.log("User Updated:", response.data);
         toast.success("User Details Updated Succesfully");
+        fetchUsers()
       } else {
         // Adding a new user
+        let config = {
+          headers: {
+            Authorization: Cookies.get("jwtToken"),
+            "Content-Type": "application/json",
+          },
+        };
+
         const response = await axios.post(
           "http://127.0.0.1:5000/create_user",
-          userData
+          userData,
+          // { withCredentials: true },
+          config
         );
         // console.log("User Created:", response.data);
         toast.success("User Details Created Succesfully");
+        fetchUsers()
       }
       // After successful update or creation, you might want to perform additional actions like closing the modal
       handleModalClose();

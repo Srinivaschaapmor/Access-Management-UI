@@ -54,8 +54,7 @@ function UserData({
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Fetch data from the API
+  function fetchEndUsersWithAccess() {
     axios
       .get("http://127.0.0.1:5000/endusers")
       .then((response) => {
@@ -69,7 +68,15 @@ function UserData({
       .catch((error) => {
         console.error("Error fetching user data:", error);
       });
+  }
+
+  // TODO: FETCH USER AREAS
+  
+  useEffect(() => {
+    // Fetch data from the API
+    fetchEndUsersWithAccess();
   }, []);
+
   console.log("rows", rows);
   const handleTabChange = (event, newValue) => {
     setSelectedSpaceName(newValue);
@@ -274,6 +281,7 @@ function UserData({
           data={data}
           filteredOptions={filteredOptions}
           setFilteredOptions={setFilteredOptions}
+          fetchEndUsersWithAccess={fetchEndUsersWithAccess}
         />
         <Dialog open={deleteModalopen} onClose={handleDeleteClose}>
           <DialogTitle>{"Confirm Deletion"}</DialogTitle>
