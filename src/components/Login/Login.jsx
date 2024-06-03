@@ -177,9 +177,12 @@ function Login() {
           Cookies.set("jwtToken", jwtToken, { expires: 1 / 12 });
           Cookies.set("userEmail", useremail);
           Cookies.set("access", JSON.stringify(access));
-          window.location.href = decodeURIComponent(redirect_uri);
-          // navigate("/dashboard/access-management");
-          // toast.success("Login successful!");
+          if (redirect_uri) {
+            window.location.href = decodeURIComponent(redirect_uri);
+          } else {
+            navigate("/dashboard/access-management");
+            toast.success("Login successful!");
+          }
         } else {
           toast.error("Invalid OTP.");
         }
