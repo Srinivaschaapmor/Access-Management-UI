@@ -32,7 +32,7 @@ import { useNavigate } from "react-router-dom";
 import UserAccess from "./UserAccess";
 import { FaRegTrashCan } from "react-icons/fa6";
 import MainHeader from "../MainHeader";
-import { getUsers } from "../../apiCalls/Apicalls";
+import { getUsers, getUsersWithAccess } from "../../apiCalls/Apicalls";
 function UserData({
   handleModalOpen,
   userData,
@@ -57,7 +57,7 @@ function UserData({
 
   function fetchEndUsersWithAccess() {
     axios
-      .get(`${getUsers}`)
+      .get(`${getUsersWithAccess}`)
       .then((response) => {
         const dataWithId = response.data.map((item, index) => ({
           ...item,
@@ -78,7 +78,6 @@ function UserData({
     fetchEndUsersWithAccess();
   }, []);
 
-  console.log("rows", rows);
   const handleTabChange = (event, newValue) => {
     setSelectedSpaceName(newValue);
     if (newValue === "All") {
@@ -105,7 +104,7 @@ function UserData({
 
   const handleDelete = () => {
     // Add your delete logic here
-    console.log("User deleted");
+
     setDeleteModalOpen(false);
   };
 

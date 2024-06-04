@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   FormControl,
+  FormHelperText,
   FormLabel,
   Grid,
   InputLabel,
@@ -26,13 +27,17 @@ const style = {
   boxShadow: 24,
   borderRadius: 2,
   p: 4,
+  overflowY: "auto",
 };
+
 function EmployeeModal({
   modalOpen,
   handleModalClose,
   handleChange,
   handleSubmit,
   userData,
+  formErrors,
+  setIsSubmit,
 }) {
   return (
     <Modal
@@ -71,6 +76,8 @@ function EmployeeModal({
                 name="FirstName"
                 value={userData.FirstName}
                 onChange={handleChange}
+                helperText={formErrors.FirstName}
+                FormHelperTextProps={{ style: { color: "red" } }}
                 size="small"
                 fullWidth
                 InputProps={{
@@ -103,6 +110,8 @@ function EmployeeModal({
                 name="LastName"
                 value={userData.LastName}
                 onChange={handleChange}
+                helperText={formErrors.LastName}
+                FormHelperTextProps={{ style: { color: "red" } }}
                 size="small"
                 fullWidth
                 InputProps={{
@@ -135,6 +144,8 @@ function EmployeeModal({
                 name="EmpId"
                 value={userData.EmpId}
                 onChange={handleChange}
+                helperText={formErrors.EmpId}
+                FormHelperTextProps={{ style: { color: "red" } }}
                 size="small"
                 fullWidth
                 InputProps={{
@@ -167,6 +178,8 @@ function EmployeeModal({
                 name="Contact"
                 value={userData.Contact}
                 onChange={handleChange}
+                helperText={formErrors.Contact}
+                FormHelperTextProps={{ style: { color: "red" } }}
                 size="small"
                 fullWidth
                 InputProps={{
@@ -199,6 +212,8 @@ function EmployeeModal({
                 name="Email"
                 value={userData.Email}
                 onChange={handleChange}
+                helperText={formErrors.Email}
+                FormHelperTextProps={{ style: { color: "red" } }}
                 size="small"
                 fullWidth
                 InputProps={{
@@ -231,6 +246,8 @@ function EmployeeModal({
                 name="JobTitle"
                 value={userData.JobTitle}
                 onChange={handleChange}
+                helperText={formErrors.JobTitle}
+                FormHelperTextProps={{ style: { color: "red" } }}
                 size="small"
                 fullWidth
                 InputProps={{
@@ -279,6 +296,9 @@ function EmployeeModal({
                   <MenuItem value={"Internship"}>Internship</MenuItem>
                   <MenuItem value={"Contract"}>Contract</MenuItem>
                 </Select>
+                <FormHelperText sx={{ color: "red", fontSize: 12 }}>
+                  {formErrors.EmployeeType}
+                </FormHelperText>
               </FormControl>
             </Grid>
 
@@ -319,6 +339,9 @@ function EmployeeModal({
                   <MenuItem value={"Quality Assurance"}>Testing</MenuItem>
                   <MenuItem value={"AI-ML"}>AI-ML</MenuItem>
                 </Select>
+                <FormHelperText sx={{ color: "red", fontSize: 12 }}>
+                  {formErrors.SpaceName}
+                </FormHelperText>
               </FormControl>
             </Grid>
           </Grid>
@@ -326,7 +349,10 @@ function EmployeeModal({
             <Button
               // variant="contained"
               color="primary"
-              onClick={handleModalClose}
+              onClick={() => {
+                handleModalClose();
+                setIsSubmit(false);
+              }}
               sx={{ mt: 2, textAlign: "center", fontSize: 12 }}
             >
               cancel

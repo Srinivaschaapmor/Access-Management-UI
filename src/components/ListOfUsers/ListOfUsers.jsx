@@ -36,6 +36,8 @@ function ListOfUsers() {
   const [currentRow, setCurrentRow] = useState(null);
   const [deleteUser, setDeleteUser] = useState(null);
   const [selectedareas, setSelectedareas] = useState([]);
+  const [formErrors, setFormErrors] = useState({});
+  const [isSubmit, setIsSubmit] = useState(false);
   const handlePopoverOpen = (event, row) => {
     setAnchorEl(event.currentTarget);
     setCurrentRow(row);
@@ -60,6 +62,7 @@ function ListOfUsers() {
           ...item,
           id: item?.EmpId, // assuming EmpId is unique for each user
         }));
+
         setRows(dataWithId);
         setFilteredRows(dataWithId); // Initially display all rows
       })
@@ -96,9 +99,65 @@ function ListOfUsers() {
     }));
   };
 
+  const validate = (values) => {
+    const errors = {};
+    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const specialCharsRegex = /[!@#$%^&*(),.?":{}|<>]/; // Regex to detect special characters
+    const emojiRegex =
+      /[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}]/u; // Regex to detect emojis
+    const leadingTrailingSpacesRegex = /^\s+|\s+$/g; // Regex to detect leading and trailing spaces
+    // const upperLimit = 50; // Upper limit for field length
+    // const lowerLimit = 3; // Lower limit for field length
+
+    // Common validation function for text fields
+    const validateTextField = (fieldName, value) => {
+      if (!value) {
+        errors[fieldName] = "* Field is required";
+      } else if (
+        specialCharsRegex.test(value) ||
+        emojiRegex.test(value) ||
+        leadingTrailingSpacesRegex.test(value)
+      ) {
+        errors[
+          fieldName
+        ] = `Field should not contain special characters, emojis, or leading/trailing spaces`;
+      }
+    };
+
+    validateTextField("FirstName", values.FirstName);
+
+    validateTextField("LastName", values.LastName);
+
+    validateTextField("EmpId", values.EmpId);
+
+    validateTextField("Contact", values.Contact);
+
+    validateTextField("EmployeeType", values.EmployeeType);
+
+    validateTextField("Email", values.Email);
+
+    validateTextField("JobTitle", values.JobTitle);
+    validateTextField("EmployeeType", values.EmployeeType);
+    validateTextField("SpaceName", values.SpaceName);
+
+    return errors;
+  };
+
+  useEffect(() => {
+    // console.log(formErrors);
+    if (isSubmit) {
+      setFormErrors(validate(userData));
+    }
+    // console.log(`formErrors-useEffect: `, formErrors);
+    // else {
+    //   setFormErrors({});
+    // }
+  }, [formErrors, userData, isSubmit]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setIsSubmit(true);
     try {
       if (userData.Id) {
         // Editing an existing user
@@ -148,8 +207,9 @@ function ListOfUsers() {
       EmployeeType: "",
       SpaceName: "",
     });
-
     setModelOpen(false);
+
+    setFormErrors({});
   };
 
   const [deleteModalopen, setDeleteModalOpen] = useState(false);
@@ -160,7 +220,7 @@ function ListOfUsers() {
   const handleDeleteClose = () => {
     setDeleteModalOpen(false);
   };
-  console.log("currentRow", deleteUser);
+
   const handleDelete = async () => {
     try {
       const empid = deleteUser?._id;
@@ -329,7 +389,6 @@ function ListOfUsers() {
     },
   ];
 
-  console.log("userData", userData);
   return (
     <Box p={5} pt={3}>
       <MainHeader />
@@ -396,6 +455,8 @@ function ListOfUsers() {
         handleChange={handleChange}
         handleSubmit={handleSubmit}
         userData={userData}
+        formErrors={formErrors}
+        setIsSubmit={setIsSubmit}
       />
       <AddAccess
         open={openDrawer}

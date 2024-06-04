@@ -37,7 +37,7 @@ function MainHeader() {
   };
   const canBeOpen = openPopper && Boolean(anchorEl);
   const id = canBeOpen ? "transition-popper" : undefined;
-  const userEmail = Cookies.get("UserEmail");
+  const userEmail = Cookies.get("userEmail");
   const username = userEmail?.split("@")[0].toUpperCase();
   const [showSearch, setShowSearch] = useState(false);
 

@@ -60,14 +60,14 @@ function AddAccess({
     "Reports_View_And_Write",
     "Reports_Write",
   ];
-  console.log(accessData.length);
+
   useEffect(() => {
     const filteredOptions = accessData.filter(
       (option) => !userData?.Access.includes(option)
     );
     setFilteredOptions(filteredOptions);
   }, [userData?.access]);
-  console.log("filteredOptions", filteredOptions);
+
   const handleCheckboxChange = (event, value) => {
     setSelectedareas(value);
   };
