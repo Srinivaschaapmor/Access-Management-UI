@@ -21,7 +21,7 @@ import { object } from "yup";
 import { TroubleshootOutlined } from "@mui/icons-material";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { loginEmail } from "../../apiCalls/Apicalls";
+import { loginEmail, verifyOtp } from "../../apiCalls/Apicalls";
 import {
   Routes,
   Route,
@@ -161,13 +161,10 @@ function Login() {
 
     if (Object.entries(formErrors).length === 0) {
       try {
-        const response = await axios.post(
-          "http://127.0.0.1:5000/login/verify-otp",
-          {
-            otp: loginDetails.otp,
-            email: loginDetails.email,
-          }
-        );
+        const response = await axios.post(`${verifyOtp}`, {
+          otp: loginDetails.otp,
+          email: loginDetails.email,
+        });
         if (response.data.jwt_token) {
           const useremail = response.data.userEmail;
           const jwtToken = response.data.jwt_token;
@@ -180,7 +177,7 @@ function Login() {
           if (redirect_uri) {
             window.location.href = decodeURIComponent(redirect_uri);
           } else {
-            navigate("/dashboard/access-management");
+            navigate("/dashboard/users-list");
             toast.success("Login successful!");
           }
         } else {

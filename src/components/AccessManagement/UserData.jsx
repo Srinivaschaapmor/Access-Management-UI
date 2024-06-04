@@ -32,6 +32,7 @@ import { useNavigate } from "react-router-dom";
 import UserAccess from "./UserAccess";
 import { FaRegTrashCan } from "react-icons/fa6";
 import MainHeader from "../MainHeader";
+import { getUsers } from "../../apiCalls/Apicalls";
 function UserData({
   handleModalOpen,
   userData,
@@ -56,7 +57,7 @@ function UserData({
 
   function fetchEndUsersWithAccess() {
     axios
-      .get("http://127.0.0.1:5000/endusers")
+      .get(`${getUsers}`)
       .then((response) => {
         const dataWithId = response.data.map((item, index) => ({
           ...item,
@@ -71,7 +72,7 @@ function UserData({
   }
 
   // TODO: FETCH USER AREAS
-  
+
   useEffect(() => {
     // Fetch data from the API
     fetchEndUsersWithAccess();
@@ -109,7 +110,7 @@ function UserData({
   };
 
   const columns = [
-    { field: "EmpId", headerName: "Emp ID", width: 110 },
+    { field: "EmpId", headerName: "Emp ID", width: 150 },
     {
       field: "FullName",
       headerName: "Full Name",
@@ -128,11 +129,11 @@ function UserData({
         );
       },
     },
-    { field: "Contact", headerName: "Mobile Number", width: 190 },
+    { field: "Contact", headerName: "Mobile Number", width: 200 },
     {
       field: "access",
       headerName: "Access",
-      width: 150,
+      width: 200,
       renderCell: (params) => (
         <Stack direction={"row"} alignItems={"center"} mt={2} mr={10} gap={1}>
           <Button
@@ -151,38 +152,38 @@ function UserData({
         </Stack>
       ),
     },
-    {
-      field: "Actions",
-      headerName: "Actions",
-      width: 130,
-      renderCell: (params) => (
-        <Box>
-          <Stack direction={"row"} mt={2} gap={1}>
-            <IconButton
-              aria-label="edit"
-              size="small"
-              onClick={() => {
-                setUserData(params.row); // Set user data
-                handleModalOpen(); // Open the modal
-              }}
-            >
-              <EditIcon sx={{ fontSize: "19px" }} />
-            </IconButton>
-            <IconButton onClick={handleClickOpen} sx={{ width: "32px" }}>
-              <FaRegTrashCan
-                sx={{
-                  fontSize: "15px",
-                  mt: 0.5,
-                  color: "grey",
-                  cursor: "pointer",
-                  width: "31px  ",
-                }}
-              />
-            </IconButton>
-          </Stack>
-        </Box>
-      ),
-    },
+    // {
+    //   field: "Actions",
+    //   headerName: "Actions",
+    //   width: 130,
+    //   renderCell: (params) => (
+    //     <Box>
+    //       <Stack direction={"row"} mt={2} gap={1}>
+    //         <IconButton
+    //           aria-label="edit"
+    //           size="small"
+    //           onClick={() => {
+    //             setUserData(params.row); // Set user data
+    //             handleModalOpen(); // Open the modal
+    //           }}
+    //         >
+    //           <EditIcon sx={{ fontSize: "19px" }} />
+    //         </IconButton>
+    //         <IconButton onClick={handleClickOpen} sx={{ width: "32px" }}>
+    //           <FaRegTrashCan
+    //             sx={{
+    //               fontSize: "15px",
+    //               mt: 0.5,
+    //               color: "grey",
+    //               cursor: "pointer",
+    //               width: "31px  ",
+    //             }}
+    //           />
+    //         </IconButton>
+    //       </Stack>
+    //     </Box>
+    //   ),
+    // },
   ];
 
   const spaceNames = ["All", ...new Set(rows?.map((row) => row?.SpaceName))];
@@ -268,7 +269,7 @@ function UserData({
           }}
           pageSizeOptions={[5]}
           disableRowSelectionOnClick
-          checkboxSelection
+          // checkboxSelection
         />
         <UserAccess
           open={openDrawer}

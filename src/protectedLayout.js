@@ -12,7 +12,7 @@ const ProtectedRoute = () => {
     if (token === undefined) {
       navigate("/");
     } else if (window.location.pathname === "/login") {
-      navigate("/dashboard/access-management");
+      navigate("/dashboard/users-list");
     }
   }, [navigate, token]);
 

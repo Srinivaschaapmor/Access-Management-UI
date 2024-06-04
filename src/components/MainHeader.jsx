@@ -2,10 +2,12 @@ import {
   Avatar,
   Badge,
   Box,
+  IconButton,
   Menu,
   MenuItem,
   Popper,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import Cookies from "js-cookie";
@@ -37,9 +39,26 @@ function MainHeader() {
   const id = canBeOpen ? "transition-popper" : undefined;
   const userEmail = Cookies.get("UserEmail");
   const username = userEmail?.split("@")[0].toUpperCase();
+  const [showSearch, setShowSearch] = useState(false);
+
+  const toggleSearch = () => {
+    setShowSearch((prev) => !prev);
+  };
   return (
     <Box display="flex" justifyContent="space-between" alignItems={"center"}>
-      <SearchIcon sx={{ color: "rgb(138, 138, 138)" }} />
+      <Box>
+        <IconButton onClick={toggleSearch}>
+          <SearchIcon sx={{ color: "rgb(138, 138, 138)" }} />
+        </IconButton>
+        {showSearch && (
+          <TextField
+            variant="outlined"
+            size="small"
+            placeholder="Search..."
+            sx={{ ml: 2 }}
+          />
+        )}
+      </Box>
       <Stack direction={"row"} gap={3} alignItems={"center"}>
         <Stack direction={"row"}>
           <Badge

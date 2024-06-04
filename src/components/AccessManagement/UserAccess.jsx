@@ -22,6 +22,7 @@ import { CheckBox } from "@mui/icons-material";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
+import { editAccess } from "../../apiCalls/Apicalls";
 
 function UserAccess({
   open,
@@ -36,6 +37,35 @@ function UserAccess({
   setFilteredOptions,
   fetchEndUsersWithAccess,
 }) {
+  const accessData = [
+    "Recent_Openings_View",
+    "Recent_Openings_JobOpenings_View",
+    "Recent_Openings_JobOpenings_Write",
+    "Events_View",
+    "Policies_View",
+    "Employees_View",
+    "Recruitment_View",
+    "New_Recruitment_View_And_Write",
+    "New_Recruitment_Write",
+    "Recruitment_Status_View_And_write",
+    "Recruitment_Status_Write",
+    "On_Boarding_View_And_Write",
+    "On_Boarding_Write",
+    "New_Job_View_And_Write",
+    "New_Job_Write",
+    "Interviewer_Board_View",
+    "Interviewer_Board_write",
+    "Blogs_View_And_Write",
+    "Blogs_Write",
+    "Write_FeedBack_View",
+    "Write_FeedBack_View_And_Write",
+    "View_FeedBack_View",
+    "View_FeedBack_Write",
+    "Projects_View_And_Write",
+    "Projects_Write",
+    "Reports_View_And_Write",
+    "Reports_Write",
+  ];
   useEffect(() => {
     if (selectedRow?.Access) {
       setAreas(selectedRow.Access);
@@ -43,7 +73,9 @@ function UserAccess({
   }, [selectedRow]);
 
   useEffect(() => {
-    const filteredOptions = data.filter((option) => !areas.includes(option));
+    const filteredOptions = accessData.filter(
+      (option) => !areas.includes(option)
+    );
     setFilteredOptions(filteredOptions);
   }, [areas]);
 
@@ -68,7 +100,7 @@ function UserAccess({
       };
 
       const response = await axios.put(
-        `http://127.0.0.1:5000/users/update/access/${empid}`,
+        `${editAccess}/${empid}`,
         { Access: selectedAreas },
         config
       );
@@ -182,7 +214,7 @@ function UserAccess({
               </Stack>
             </Box>
           )}
-          <Box sx={{ px: 3 }}>
+          <Box sx={{ px: 3, maxHeight: 400, overflowY: "auto" }}>
             <Table
               sx={{
                 mt: 1,
@@ -191,6 +223,7 @@ function UserAccess({
                 ".css-xn32gr-MuiTableCell-root": { textAlign: "center" },
                 ".css-1ex1afd-MuiTableCell-root": { textAlign: "center" },
                 ".css-k2imy0-MuiSvgIcon-root": { margin: "auto" },
+                maxHeight: 20,
               }}
             >
               <TableHead>

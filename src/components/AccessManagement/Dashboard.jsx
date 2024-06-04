@@ -22,10 +22,11 @@ import { useLocation } from "react-router-dom/dist";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 function Dashboard() {
+  const [selectedAreas, setSelectedAreas] = useState([]);
   const location = useLocation();
   const [department, setDepartment] = React.useState("");
   const [areas, setAreas] = useState([]);
-  const [selectedAreas, setSelectedAreas] = useState([]);
+
   const data = ["Ground Floor", "First Floor", "Second Floor", "Third Floor"];
   const [filteredOptions, setFilteredOptions] = useState([]);
 

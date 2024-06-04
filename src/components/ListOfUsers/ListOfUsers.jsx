@@ -1,8 +1,13 @@
 import {
   Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   IconButton,
-  Popper,
+  Popover,
   Stack,
   Typography,
 } from "@mui/material";
@@ -11,35 +16,45 @@ import MainHeader from "../MainHeader";
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
-import EmployeeModal from "../Dashboard/UserModal";
+import EmployeeModal from "../AccessManagement/UserModal";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import ArrowOutwardIcon from "@mui/icons-material/ArrowOutward";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditIcon from "@mui/icons-material/Edit";
-import { FaRegTrashCan } from "react-icons/fa6";
 import { DataGrid } from "@mui/x-data-grid";
+import AddAccess from "./AddAccess";
 import Cookies from "js-cookie";
+import {
+  DeleteUser,
+  createUser,
+  getUsers,
+  updateUser,
+} from "../../apiCalls/Apicalls";
 
 function ListOfUsers() {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [open, setOpen] = useState(false);
-
-  const handlepopperClickOpen = (event) => {
+  const [currentRow, setCurrentRow] = useState(null);
+  const [deleteUser, setDeleteUser] = useState(null);
+  const [selectedareas, setSelectedareas] = useState([]);
+  const handlePopoverOpen = (event, row) => {
     setAnchorEl(event.currentTarget);
-    setOpen((prevOpen) => !prevOpen);
+    setCurrentRow(row);
   };
 
-  const handleClose = () => {
+  const handlePopoverClose = () => {
     setAnchorEl(null);
-    setOpen(false);
+    setCurrentRow(null);
   };
+
+  const open = Boolean(anchorEl);
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
+  const [filteredOptions, setFilteredOptions] = useState([]);
+  const [openDrawer, setOpenDrawer] = useState(false);
 
   function fetchUsers() {
     axios
-      .get("http://127.0.0.1:5000/endusers")
+      .get(`${getUsers}`)
       .then((response) => {
         const dataWithId = response.data.map((item, index) => ({
           ...item,
@@ -57,6 +72,7 @@ function ListOfUsers() {
     // Fetch data from the API
     fetchUsers();
   }, []);
+
   const [modalOpen, setModelOpen] = useState(false);
   const handleModalOpen = () => setModelOpen(true);
   const [selectedAreas, setSelectedAreas] = useState([]);
@@ -87,12 +103,12 @@ function ListOfUsers() {
       if (userData.Id) {
         // Editing an existing user
         const response = await axios.put(
-          `http://127.0.0.1:5000//users/update/${userData.EmpId}`,
+          `${updateUser}/${userData.EmpId}`,
           userData
         );
         // console.log("User Updated:", response.data);
         toast.success("User Details Updated Succesfully");
-        fetchUsers()
+        fetchUsers();
       } else {
         // Adding a new user
         let config = {
@@ -103,14 +119,14 @@ function ListOfUsers() {
         };
 
         const response = await axios.post(
-          "http://127.0.0.1:5000/create_user",
+          `${createUser}`,
           userData,
           // { withCredentials: true },
           config
         );
         // console.log("User Created:", response.data);
         toast.success("User Details Created Succesfully");
-        fetchUsers()
+        fetchUsers();
       }
       // After successful update or creation, you might want to perform additional actions like closing the modal
       handleModalClose();
@@ -135,9 +151,37 @@ function ListOfUsers() {
 
     setModelOpen(false);
   };
+
   const [deleteModalopen, setDeleteModalOpen] = useState(false);
-  const handleClickOpen = () => {
-    setDeleteModalOpen(true);
+  const handleClickOpen = (row) => {
+    setDeleteModalOpen(true); // Open the delete modal
+    setDeleteUser(row);
+  };
+  const handleDeleteClose = () => {
+    setDeleteModalOpen(false);
+  };
+  console.log("currentRow", deleteUser);
+  const handleDelete = async () => {
+    try {
+      const empid = deleteUser?._id;
+      if (!empid) {
+        console.error("EmpId is missing.");
+        return;
+      }
+      let config = {
+        headers: {
+          Authorization: Cookies.get("jwtToken"),
+          "Content-Type": "application/json",
+        },
+      };
+
+      const response = await axios.delete(`${DeleteUser}/${empid}`, config);
+
+      toast.success("Access Updated Successfully");
+      setDeleteModalOpen(false);
+    } catch (error) {
+      toast.error("Error updating access areas");
+    }
   };
   const columns = [
     { field: "EmpId", headerName: "Emp ID", width: 180 },
@@ -160,28 +204,6 @@ function ListOfUsers() {
       },
     },
     { field: "Contact", headerName: "Mobile Number", width: 200 },
-    // {
-    //   field: "access",
-    //   headerName: "Access",
-    //   width: 150,
-    //   // renderCell: (params) => (
-    //   //   <Stack direction={"row"} alignItems={"center"} mt={2} mr={10} gap={1}>
-    //   //     <Button
-    //   //       onClick={() => handleRowClick(params.row)}
-    //   //       sx={{
-    //   //         ":hover": { backgroundColor: "none" },
-    //   //         fontSize: 12,
-    //   //         mt: 1,
-    //   //         textTransform: "capitalize",
-    //   //         color: "rgb(135, 79, 224)",
-    //   //       }}
-    //   //     >
-    //   //       View Access
-    //   //     </Button>
-    //   //     <ArrowOutwardIcon sx={{ fontSize: 14, color: "rgb(135, 79, 224)" }} />
-    //   //   </Stack>
-    //   // ),
-    // },
     {
       field: "Actions",
       headerName: "Actions",
@@ -193,48 +215,121 @@ function ListOfUsers() {
               <VisibilityOutlinedIcon sx={{ fontSize: "19px" }} />
             </IconButton>
 
-            <IconButton onClick={handlepopperClickOpen} sx={{ width: "32px" }}>
+            <IconButton
+              onClick={(event) => handlePopoverOpen(event, params.row)}
+              sx={{ width: "32px" }}
+            >
               <MoreVertIcon />
             </IconButton>
           </Stack>
 
-          <Popper open={open} anchorEl={anchorEl} onClose={handleClose}>
-            <Box
+          <Popover
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handlePopoverClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+            transformOrigin={{
+              vertical: "top",
+              horizontal: "left",
+            }}
+            // disableRestoreFocus
+
+            sx={{
+              "& .MuiPaper-root": {
+                boxShadow: "none",
+              },
+            }}
+          >
+            <Stack
               sx={{
                 p: 1,
-                bgcolor: "background.paper",
-                border: "1px solid",
-                borderColor: "grey.500",
+                // bgcolor: "rgb(227, 227, 227)",s
+
+                border: "1px solid rgb(194, 194, 194)",
+                borderRadius: 4,
+                pr: 2,
               }}
             >
-              <IconButton
-                aria-label="edit"
-                size="small"
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": {
+                    bgcolor: "grey.200",
+                  },
+                }}
                 onClick={() => {
-                  setUserData(params.row); // Set user data
-                  handleModalOpen(); // Open the modal
-                  handleClose(); // Close the popper
+                  setUserData(currentRow); // Set user data
+                  setOpenDrawer(true); // Open the modal
+                  handlePopoverClose(); // Close the popover
                 }}
               >
-                <EditIcon sx={{ fontSize: "19px" }} />
-              </IconButton>
-              <IconButton onClick={handleClickOpen} sx={{ width: "32px" }}>
-                <FaRegTrashCan
-                  sx={{
-                    fontSize: "15px",
-                    mt: 0.5,
-                    color: "grey",
-                    cursor: "pointer",
-                    width: "31px",
-                  }}
-                />
-              </IconButton>
-            </Box>
-          </Popper>
+                <IconButton aria-label="add" size="small">
+                  <AddIcon sx={{ fontSize: "19px" }} />
+                </IconButton>
+                <Typography ml={1} fontSize={13} px={1}>
+                  Add Access
+                </Typography>
+              </Stack>
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                sx={{
+                  cursor: "pointer",
+                  "&:hover": {
+                    bgcolor: "grey.200",
+                  },
+                }}
+                onClick={() => {
+                  setUserData(currentRow); // Set user data
+                  handleModalOpen(); // Open the modal
+                  handlePopoverClose(); // Close the popover
+                }}
+              >
+                <IconButton aria-label="edit" size="small">
+                  <EditIcon sx={{ fontSize: "19px" }} />
+                </IconButton>
+                <Typography ml={1} fontSize={13} px={1}>
+                  Edit User
+                </Typography>
+              </Stack>
+              <Stack
+                direction={"row"}
+                alignItems={"center"}
+                sx={{
+                  cursor: "pointer",
+                  color: "red",
+                  "&:hover": {
+                    bgcolor: "grey.200",
+                  },
+                }}
+                onClick={() => {
+                  handleClickOpen(params.row);
+                  handlePopoverClose();
+                }}
+              >
+                <IconButton>
+                  <DeleteOutlineIcon
+                    sx={{ fontSize: "19px", pl: 0, color: "red" }}
+                  />
+                </IconButton>
+                <Typography fontSize={13} px={1}>
+                  Delete User
+                </Typography>
+              </Stack>
+            </Stack>
+          </Popover>
         </Box>
       ),
+      // console.log(params.row, "params.row"),
     },
   ];
+
+  console.log("userData", userData);
   return (
     <Box p={5} pt={3}>
       <MainHeader />
@@ -302,6 +397,31 @@ function ListOfUsers() {
         handleSubmit={handleSubmit}
         userData={userData}
       />
+      <AddAccess
+        open={openDrawer}
+        onClose={() => setOpenDrawer(false)}
+        filteredOptions={filteredOptions}
+        setFilteredOptions={setFilteredOptions}
+        userData={userData}
+        selectedareas={selectedareas}
+        setSelectedareas={setSelectedareas}
+      />
+      <Dialog open={deleteModalopen} onClose={handleDeleteClose}>
+        <DialogTitle>{"Confirm Deletion"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete this user?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
       <ToastContainer />
     </Box>
   );
