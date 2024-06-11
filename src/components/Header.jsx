@@ -1,87 +1,112 @@
 import {
   Avatar,
+  Badge,
   Box,
-  Button,
+  IconButton,
   Menu,
   MenuItem,
   Popper,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
 import Cookies from "js-cookie";
-import Logo from "../assets/logo.png";
+import React, { useState } from "react";
+import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
-function Header() {
+function MainHeader() {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const [openPopper, setOpenPopper] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
-
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
-    setOpen((previousOpen) => !previousOpen);
+    setOpenPopper((previousOpen) => !previousOpen);
   };
-
-  const handleClose = () => {
-    setOpen(false);
+  const handlePopperClose = () => {
+    setOpenPopper(false);
   };
-
   const handleLogout = () => {
     // Implement your logout logic here
-    // For example: redirect to logout page or clear session
     Cookies.remove("jwtToken");
     Cookies.remove("userEmail");
-    navigate("/login");
+    navigate("/");
     console.log("Logged out");
-    handleClose();
+    handlePopperClose();
   };
-
-  const handleAccountSettings = () => {
-    // Implement your account settings logic here
-    console.log("Account settings");
-    handleClose();
-  };
-
-  const canBeOpen = open && Boolean(anchorEl);
+  const canBeOpen = openPopper && Boolean(anchorEl);
   const id = canBeOpen ? "transition-popper" : undefined;
-  return (
-    <Stack
-      // direction={"row"}
-      // alignItems={"center"}
-      // justifyContent={"space-between"}
-      sx={{ pt: 5, pb: 5 }}
-    >
-      <Stack>
-        <img src={Logo} width={130} alt="Logo"></img>
-        {/* <Typography fontSize={9} fontWeight={600}>
-          LOGO TECHNOLOGIES
-        </Typography> */}
-      </Stack>
+  const userEmail = Cookies.get("userEmail");
+  const username = userEmail?.split("@")[0].toUpperCase();
+  const [showSearch, setShowSearch] = useState(false);
 
-      {/* <Stack direction={"row"} gap={2}>
-        <Box>
-          <Avatar onClick={handleClick} sx={{ cursor: "pointer" }}>
-            H
-          </Avatar>
-          <Popper id={id} open={open} anchorEl={anchorEl}>
-            <Box>
-              <Menu
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleClose}
-                onClick={handleClose}
-              >
-                <MenuItem onClick={handleAccountSettings}>
-                  Account Settings
-                </MenuItem>
-                <MenuItem onClick={handleLogout}>Logout</MenuItem>
-              </Menu>
-            </Box>
-          </Popper>
-        </Box>
-      </Stack> */}
-    </Stack>
+  const toggleSearch = () => {
+    setShowSearch((prev) => !prev);
+  };
+  return (
+    <Box display="flex" justifyContent="space-between" alignItems={"center"}>
+      <Box>
+        <IconButton onClick={toggleSearch}>
+          <SearchIcon sx={{ color: "rgb(138, 138, 138)" }} />
+        </IconButton>
+        {showSearch && (
+          <TextField
+            variant="outlined"
+            size="small"
+            placeholder="Search..."
+            sx={{ ml: 2 }}
+          />
+        )}
+      </Box>
+      <Stack direction={"row"} gap={3} alignItems={"center"}>
+        {/* <Stack direction={"row"}>
+          <Badge
+            badgeContent={2}
+            sx={{
+              "& .MuiBadge-badge": {
+                backgroundColor: "rgb(33, 175, 150)",
+                color: "white",
+              },
+            }}
+          >
+            <NotificationsNoneOutlinedIcon color="action" />
+          </Badge>
+        </Stack> */}
+        <SettingsOutlinedIcon sx={{ color: "rgb(112, 113, 114)" }} />
+        <Stack direction={"row"} gap={2}>
+          <Box>
+            <Avatar onClick={handleClick} sx={{ cursor: "pointer" }}></Avatar>
+            <Popper id={id} open={openPopper} anchorEl={anchorEl}>
+              <Box>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={openPopper}
+                  onClose={handlePopperClose}
+                  onClick={handlePopperClose}
+                  sx={{ p: 2 }}
+                >
+                  <MenuItem
+                    sx={{
+                      borderBottom: "1px solid rgb(244, 246, 248)",
+                      mb: 1,
+                    }}
+                  >
+                    <Stack direction={"row"} alignItems={"center"} gap={2}>
+                      <Avatar></Avatar>
+                      <Typography>{username}</Typography>
+                    </Stack>
+                  </MenuItem>
+                  <MenuItem>Account Settings</MenuItem>
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </Menu>
+              </Box>
+            </Popper>
+          </Box>
+        </Stack>
+      </Stack>
+    </Box>
   );
 }
 
-export default Header;
+export default MainHeader;

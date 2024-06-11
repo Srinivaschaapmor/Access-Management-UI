@@ -338,6 +338,7 @@ function EmployeeModal({
                   <MenuItem value={"Hr"}>HR</MenuItem>
                   <MenuItem value={"Quality Assurance"}>Testing</MenuItem>
                   <MenuItem value={"AI-ML"}>AI-ML</MenuItem>
+                  <MenuItem value={"Management"}>Management</MenuItem>
                 </Select>
                 <FormHelperText sx={{ color: "red", fontSize: 12 }}>
                   {formErrors.SpaceName}

@@ -39,7 +39,7 @@ function Login() {
     otp: "",
   });
   const [queryParameters] = useSearchParams();
-
+  console.log("loginDetails", loginDetails);
   const handleEmailChange = (e) => {
     const { name, value } = e.target;
     setLoginDetails((prevState) => ({ ...prevState, [name]: value }));
@@ -154,26 +154,41 @@ function Login() {
       toast.error("Please enter a valid email.");
     }
   };
-
   const handleSubmitOTP = async () => {
     setIsOtpsubmit(true);
     setFormErrors(validate(loginDetails));
 
     if (Object.entries(formErrors).length === 0) {
       try {
-        const response = await axios.post(`${verifyOtp}`, {
-          otp: loginDetails.otp,
-          email: loginDetails.email,
-        });
+        const response = await axios.post(
+          `${verifyOtp}`,
+          {
+            otp: loginDetails.otp,
+            email: loginDetails.email,
+          },
+          {
+            withCredentials: true,
+          }
+        );
         if (response.data.jwt_token) {
           const useremail = response.data.userEmail;
           const jwtToken = response.data.jwt_token;
           const redirect_uri = queryParameters.get("redirect_uri");
           const access = response.data.access;
           console.log(redirect_uri);
-          Cookies.set("jwtToken", jwtToken, { expires: 1 / 12 });
-          Cookies.set("userEmail", useremail);
-          Cookies.set("access", JSON.stringify(access));
+          Cookies.set("jwtToken", jwtToken, {
+            expires: 1 / 12,
+            domain: "localhost",
+            path: "/",
+          });
+          Cookies.set("userEmail", useremail, {
+            domain: "localhost",
+            path: "/",
+          });
+          Cookies.set("access", JSON.stringify(access), {
+            domain: "localhost",
+            path: "/",
+          });
           if (redirect_uri) {
             window.location.href = decodeURIComponent(redirect_uri);
           } else {
@@ -212,7 +227,7 @@ function Login() {
   useEffect(() => {
     const token = Cookies.get("jwtToken");
     if (token !== undefined && !queryParameters.get("redirect_uri")) {
-      navigate("/dashboard/access-management");
+      navigate("/dashboard/users-list");
     }
   });
   return (
