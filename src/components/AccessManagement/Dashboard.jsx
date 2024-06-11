@@ -15,7 +15,6 @@ import React, { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
 import UserData from "./UserData";
-import EmployeeModal from "./UserModal";
 
 import Header from "../Header";
 import { useLocation } from "react-router-dom/dist";

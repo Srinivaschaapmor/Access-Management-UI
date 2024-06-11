@@ -1,6 +1,7 @@
 import { Box, Button, Divider, Grid, Stack, Typography } from "@mui/material";
 import React, { useLayoutEffect } from "react";
-import Header from "./Header";
+
+import Logo from "../assets/logo.png";
 import AccountBoxOutlinedIcon from "@mui/icons-material/AccountBoxOutlined";
 import { useLocation, useNavigate } from "react-router-dom";
 import { HiOutlineIdentification } from "react-icons/hi";
@@ -9,7 +10,13 @@ function Sidebar() {
   const navigate = useNavigate();
   return (
     <>
-      {/* <Grid item xs={2}> */} <Header />
+      {/* <Grid item xs={2}> */}
+      <Stack sx={{ pt: 5, pb: 5 }}>
+        <img src={Logo} width={130} alt="Logo"></img>
+        {/* <Typography fontSize={9} fontWeight={600}>
+          LOGO TECHNOLOGIES
+        </Typography> */}
+      </Stack>
       <Box sx={{ ml: 3 }}>
         <Typography
           sx={{

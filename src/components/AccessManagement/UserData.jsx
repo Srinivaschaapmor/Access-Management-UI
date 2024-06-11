@@ -31,7 +31,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import UserAccess from "./UserAccess";
 import { FaRegTrashCan } from "react-icons/fa6";
-import MainHeader from "../MainHeader";
+import Header from "../Header";
 import { getUsers, getUsersWithAccess } from "../../apiCalls/Apicalls";
 function UserData({
   handleModalOpen,
@@ -189,7 +189,7 @@ function UserData({
 
   return (
     <Box>
-      <MainHeader />
+      <Header />
       <Box
         sx={{
           width: "100%",
