@@ -22,7 +22,7 @@ import { CheckBox } from "@mui/icons-material";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
-import { editAccess } from "../../apiCalls/Apicalls";
+import { deleteUserAccess, editAccess } from "../../apiCalls/Apicalls";
 
 function UserAccess({
   open,
@@ -86,7 +86,7 @@ function UserAccess({
   const handleAddAreas = async () => {
     try {
       // Make sure to replace 'empid' with the actual EmpId of the user
-      const empid = selectedRow?.EmpId; // Assuming userData contains EmpId of the user
+      const empid = selectedRow?._id; // Assuming userData contains EmpId of the user
       if (!empid) {
         console.error("EmpId is missing.");
         return;
@@ -107,14 +107,35 @@ function UserAccess({
       // refresh table rows
       fetchEndUsersWithAccess();
       toast.success("Access Updated Succesfully");
+      onClose();
+      setSelectedAreas([]);
     } catch (error) {
       toast.error("Error updating access areas");
       // Handle error, if needed
     }
   };
+  const handleDeleteArea = async (area) => {
+    try {
+      setAreas((prevAreas) => prevAreas.filter((a) => a !== area));
+      const config = {
+        headers: {
+          Authorization: Cookies.get("jwtToken"),
+          "Content-Type": "application/json",
+        },
+      };
 
-  const handleDeleteArea = (area) => {
-    setAreas((prevAreas) => prevAreas.filter((a) => a !== area));
+      const response = await axios.delete(
+        `${deleteUserAccess}/${selectedRow._id}/${area}`,
+        config
+      );
+      if (response.status === 200) {
+        toast.success("Access Deleted Succesfully");
+      }
+    } catch (error) {
+      console.error("Error deleting area:", error);
+      toast.error("Failed to delete access");
+      // Handle error if needed
+    }
   };
 
   return (

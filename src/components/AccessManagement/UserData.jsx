@@ -205,7 +205,7 @@ function UserData({
               User Access Management
             </Typography>
           </Box>
-          <Button
+          {/* <Button
             variant="contained"
             sx={{
               ":hover": { bgcolor: "rgb(69, 79, 91)" },
@@ -218,7 +218,7 @@ function UserData({
           >
             <AddIcon sx={{ mr: 1 }} />
             Add Access
-          </Button>
+          </Button> */}
         </Stack>
         <Box height={50} bgcolor={"white"} pl={2} mt={3}>
           <Tabs

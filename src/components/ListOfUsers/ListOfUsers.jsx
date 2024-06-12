@@ -207,6 +207,9 @@ function ListOfUsers() {
       }
       handleModalClose();
     } catch (error) {
+      if (error.response.status === 409) {
+        toast.error("User already Exists");
+      }
       toast.error(error);
     }
   };

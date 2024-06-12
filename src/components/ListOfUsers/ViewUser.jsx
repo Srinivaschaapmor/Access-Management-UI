@@ -22,7 +22,6 @@ const style = {
 };
 
 function ViewUser({ open, handleClose, currentRow }) {
-  console.log(currentRow, "userDa");
   return (
     <Modal
       open={open}
