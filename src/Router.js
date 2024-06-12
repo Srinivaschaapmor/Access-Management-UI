@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./components/Login/Login";
 import Dashboard from "./components/AccessManagement/Dashboard";
 import ProtectedRoute from "./protectedLayout";
-import LoginCallback from "./components/Login/LoginCallback";
+
 import ListOfUsers from "./components/ListOfUsers/ListOfUsers";
 // import Data from "./Data/Data";
 // import { Json } from "./dataFolder";
@@ -15,7 +15,7 @@ const Router = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/login" element={<LoginCallback />} />
+
         <Route path="/" element={<ProtectedRoute />}>
           {" "}
           <Route path="/dashboard/access-management" element={<Dashboard />} />

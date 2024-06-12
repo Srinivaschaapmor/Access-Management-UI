@@ -74,7 +74,7 @@ function AddAccess({
 
   const handleAddAreas = async () => {
     try {
-      const empid = userData?.EmpId;
+      const empid = userData?._id;
       if (!empid) {
         console.error("EmpId is missing.");
         return;

@@ -30,6 +30,7 @@ import {
 } from "react-router-dom";
 function Login() {
   const [formErrors, setFormErrors] = useState({});
+
   const [isSubmit, setIssubmit] = useState(false);
   const [isOtpSubmit, setIsOtpsubmit] = useState(false);
   const [email, setEmail] = useState();
@@ -39,7 +40,7 @@ function Login() {
     otp: "",
   });
   const [queryParameters] = useSearchParams();
-  console.log("loginDetails", loginDetails);
+
   const handleEmailChange = (e) => {
     const { name, value } = e.target;
     setLoginDetails((prevState) => ({ ...prevState, [name]: value }));
