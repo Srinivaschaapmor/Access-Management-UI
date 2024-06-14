@@ -6,6 +6,7 @@ import Dashboard from "./components/AccessManagement/Dashboard";
 import ProtectedRoute from "./protectedLayout";
 
 import ListOfUsers from "./components/ListOfUsers/ListOfUsers";
+import Home from "./components/home/Home";
 // import Data from "./Data/Data";
 // import { Json } from "./dataFolder";
 
@@ -19,6 +20,7 @@ const Router = () => {
         <Route path="/" element={<ProtectedRoute />}>
           {" "}
           <Route path="/dashboard/access-management" element={<Dashboard />} />
+          <Route path="/dashboard/home" element={<Home />} />
           <Route path="/dashboard/users-list" element={<ListOfUsers />}></Route>
           {/* <Route path="/user-access-settings/:id" element={<UserAccess />} /> */}
         </Route>

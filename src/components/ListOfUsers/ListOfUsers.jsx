@@ -9,10 +9,11 @@ import {
   IconButton,
   Popover,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import MainHeader from "../Header";
+
 import AddIcon from "@mui/icons-material/Add";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -143,6 +144,13 @@ function ListOfUsers() {
       errors.Email = "Invalid email format";
     }
 
+    // Validate Contact Number
+    if (!values.Contact) {
+      errors.Contact = "* Field is required";
+    } else if (!/^\d{10}$/.test(values.Contact)) {
+      errors.Contact = "Contact number should contain 10 digits";
+    }
+
     // Common validation function for text fields
     const validateTextField = (fieldName, value) => {
       if (!value) {
@@ -184,36 +192,47 @@ function ListOfUsers() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmit(true);
-    try {
-      if (userData.Id) {
-        // Editing an existing user
-        const response = await axios.put(
-          `${updateUser}/${userData.EmpId}`,
-          userData
-        );
-        toast.success("User Details Updated Successfully");
-        fetchUsers();
-      } else {
-        // Adding a new user
+    const errors = validate(userData); // Perform validation
+    setFormErrors(errors); // Update form errors
+
+    if (Object.keys(errors).length === 0) {
+      // Check if there are no errors
+      try {
         let config = {
           headers: {
             Authorization: Cookies.get("jwtToken"),
             "Content-Type": "application/json",
           },
         };
-        const response = await axios.post(`${createUser}`, userData, config);
-        toast.success("User Details Created Successfully");
+        if (userData?._id) {
+          // Editing an existing user
+          const response = await axios.put(
+            `${updateUser}/${userData._id}`,
+            userData,
+            config
+          );
+          if (response.status === 201) {
+            toast.success("User Details Updated Successfully");
+            setFormErrors({});
+            setUserData({});
+          }
+        } else {
+          // Adding a new user
+          const response = await axios.post(`${createUser}`, userData, config);
+          toast.success("User Details Created Successfully");
+        }
         fetchUsers();
+        handleModalClose();
+      } catch (error) {
+        if (error.response.data.error === "User already exists.") {
+          toast.error("User already Exists");
+        } else {
+          toast.error(error);
+        }
       }
-      handleModalClose();
-    } catch (error) {
-      if (error.response.status === 409) {
-        toast.error("User already Exists");
-      }
-      toast.error(error);
     }
   };
-
+  console.log(formErrors, "formErrors");
   // Delete modal open/close handlers
   const handleClickOpen = () => {
     setDeleteModalOpen(true); // Open the delete modal
@@ -246,7 +265,7 @@ function ListOfUsers() {
   };
 
   //Hanalde viiew user model open
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const handleOpen = (row) => {
     setOpen(true);
     setCurrentRow(row);
@@ -254,9 +273,10 @@ function ListOfUsers() {
   const handleClose = () => setOpen(false);
   // Define columns for DataGrid
   const columns = [
-    { field: "EmpId", headerName: "Emp ID", width: 180 },
+    { field: "EmpId", headerName: "Emp ID", width: 100, resizable: false },
     {
       field: "FullName",
+      resizable: false,
       headerName: "Full Name",
       width: 250,
       renderCell: (params) => {
@@ -273,11 +293,30 @@ function ListOfUsers() {
         );
       },
     },
-    { field: "Contact", headerName: "Mobile Number", width: 200 },
+    {
+      field: "Contact",
+      headerName: "Mobile Number",
+      width: 150,
+      resizable: false,
+    },
+    {
+      field: "AccessNote",
+      headerName: "Access Note",
+      width: 200,
+      renderCell: (params) => {
+        const hasAccess = params.row.Access && params.row.Access.length > 0;
+        return (
+          <Typography color={hasAccess ? "green" : "red"} mt={3} fontSize={13}>
+            {hasAccess ? "Access Granted" : "No Access Assigned"}
+          </Typography>
+        );
+      },
+    },
     {
       field: "Actions",
       headerName: "Actions",
-      width: 200,
+      resizable: false,
+      width: 150,
       renderCell: (params) => (
         <Box>
           <Stack direction={"row"} mt={2} gap={1}>
@@ -286,15 +325,21 @@ function ListOfUsers() {
               size="small"
               onClick={() => handleOpen(params.row)}
             >
-              <VisibilityOutlinedIcon sx={{ fontSize: "19px" }} />
+              <Tooltip title="View Details">
+                {" "}
+                <VisibilityOutlinedIcon sx={{ fontSize: "19px" }} />
+              </Tooltip>
             </IconButton>
 
-            <IconButton
-              onClick={(event) => handlePopoverOpen(event, params.row)}
-              sx={{ width: "32px" }}
-            >
-              <MoreVertIcon />
-            </IconButton>
+            <Tooltip title="More">
+              <IconButton
+                onClick={(event) => handlePopoverOpen(event, params.row)}
+                sx={{ width: "32px" }}
+              >
+                {" "}
+                <MoreVertIcon />
+              </IconButton>
+            </Tooltip>
           </Stack>
 
           <Popover
@@ -401,14 +446,13 @@ function ListOfUsers() {
 
   return (
     <Box p={5} pt={3}>
-      <MainHeader />
       <Box
         sx={{
           width: "100%",
           margin: "auto",
-          p: 4,
+
           borderRadius: 3,
-          mt: 1,
+          mt: 2,
         }}
       >
         <Stack direction={"row"} justifyContent={"space-between"}>
@@ -433,9 +477,10 @@ function ListOfUsers() {
           </Button>
         </Stack>
       </Box>
-      <Box pl={2}>
+      <Box>
         <DataGrid
           rowHeight={80}
+          disableColumnMenu
           getRowId={(row) => row.EmpId}
           sx={{
             width: "100%",
@@ -470,7 +515,12 @@ function ListOfUsers() {
       />
       <AddAccess
         open={openDrawer}
-        onClose={() => setOpenDrawer(false)}
+        onClose={() => {
+          setOpenDrawer(false);
+          setCurrentRow(null);
+          setSelectedareas([]);
+          setUserData({});
+        }}
         filteredOptions={filteredOptions}
         setFilteredOptions={setFilteredOptions}
         userData={userData}

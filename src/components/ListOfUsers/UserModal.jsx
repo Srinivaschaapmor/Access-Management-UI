@@ -1,4 +1,4 @@
-import { Height } from "@mui/icons-material";
+import { Close, Height } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -6,6 +6,7 @@ import {
   FormHelperText,
   FormLabel,
   Grid,
+  IconButton,
   InputLabel,
   MenuItem,
   Modal,
@@ -28,6 +29,7 @@ const style = {
   borderRadius: 2,
   p: 4,
   overflowY: "auto",
+  "&::-webkit-scrollbar": { display: "none" },
 };
 
 function EmployeeModal({
@@ -39,14 +41,24 @@ function EmployeeModal({
   formErrors,
   setIsSubmit,
 }) {
+  const isAnyFieldEmpty = () => {
+    return Object.values(userData).some((value) => value === "");
+  };
   return (
     <Modal
       open={modalOpen}
-      onClose={handleModalClose}
+      // onClose={handleModalClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
+        <IconButton
+          aria-label="close"
+          onClick={handleModalClose}
+          sx={{ position: "absolute", top: 0, right: 0 }}
+        >
+          <Close />
+        </IconButton>
         <Typography variant="h5" fontWeight={600} textAlign={"center"}>
           User Details
         </Typography>
@@ -359,6 +371,7 @@ function EmployeeModal({
               cancel
             </Button>
             <Button
+              disabled={isAnyFieldEmpty()}
               variant="contained"
               color="primary"
               // type="submit"

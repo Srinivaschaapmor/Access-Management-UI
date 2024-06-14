@@ -2,12 +2,14 @@ import {
   Avatar,
   Badge,
   Box,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
   Popper,
   Stack,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import Cookies from "js-cookie";
@@ -16,7 +18,7 @@ import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNone
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
-function MainHeader() {
+function Header() {
   const navigate = useNavigate();
   const [openPopper, setOpenPopper] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -45,10 +47,18 @@ function MainHeader() {
     setShowSearch((prev) => !prev);
   };
   return (
-    <Box display="flex" justifyContent="space-between" alignItems={"center"}>
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      alignItems={"center"}
+      px={2}
+    >
       <Box>
         <IconButton onClick={toggleSearch}>
-          <SearchIcon sx={{ color: "rgb(138, 138, 138)" }} />
+          <Tooltip title="Search">
+            {" "}
+            <SearchIcon sx={{ color: "rgb(138, 138, 138)" }} />
+          </Tooltip>
         </IconButton>
         {showSearch && (
           <TextField
@@ -58,6 +68,16 @@ function MainHeader() {
             sx={{ ml: 2 }}
           />
         )}
+      </Box>
+      <Box boxShadow="0px 4px 8px rgba(0, 0, 0, 0.1)" p={1} borderRadius={2}>
+        <Typography
+          fontWeight={600}
+          fontSize={20}
+          textTransform={"uppercase"}
+          color={"rgb(107, 99, 202)"}
+        >
+          OrgX Authorization Service
+        </Typography>
       </Box>
       <Stack direction={"row"} gap={3} alignItems={"center"}>
         {/* <Stack direction={"row"}>
@@ -73,10 +93,16 @@ function MainHeader() {
             <NotificationsNoneOutlinedIcon color="action" />
           </Badge>
         </Stack> */}
-        <SettingsOutlinedIcon sx={{ color: "rgb(112, 113, 114)" }} />
+        <Tooltip title="Settings">
+          <SettingsOutlinedIcon sx={{ color: "rgb(112, 113, 114)" }} />
+        </Tooltip>
         <Stack direction={"row"} gap={2}>
           <Box>
-            <Avatar onClick={handleClick} sx={{ cursor: "pointer" }}></Avatar>
+            <Avatar
+              src="https://img.freepik.com/premium-photo/graphic-designer-digital-avatar-generative-ai_934475-9292.jpg"
+              onClick={handleClick}
+              sx={{ cursor: "pointer", bgcolor: "rgb(92, 101, 254)" }}
+            ></Avatar>
             <Popper id={id} open={openPopper} anchorEl={anchorEl}>
               <Box>
                 <Menu
@@ -93,7 +119,10 @@ function MainHeader() {
                     }}
                   >
                     <Stack direction={"row"} alignItems={"center"} gap={2}>
-                      <Avatar></Avatar>
+                      <Avatar
+                        src="https://img.freepik.com/premium-photo/graphic-designer-digital-avatar-generative-ai_934475-9292.jpg"
+                        sx={{ bgcolor: "rgb(92, 101, 254)" }}
+                      ></Avatar>
                       <Typography>{username}</Typography>
                     </Stack>
                   </MenuItem>
@@ -109,4 +138,4 @@ function MainHeader() {
   );
 }
 
-export default MainHeader;
+export default Header;

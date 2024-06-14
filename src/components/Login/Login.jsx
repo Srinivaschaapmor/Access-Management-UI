@@ -28,7 +28,7 @@ function Login() {
   const [otpArray, setOtpArray] = useState(new Array(6).fill(""));
   const [timer, setTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
-
+  const [submittingOTP, setSubmittingOTP] = useState(false);
   const navigate = useNavigate();
   const [queryParameters] = useSearchParams();
   const otpFields = useRef([]);
@@ -129,9 +129,11 @@ function Login() {
   };
 
   const handleSubmitOTP = async () => {
+    if (submittingOTP) return;
     const errors = validateOtp(otp);
     setFormErrors(errors);
     if (Object.keys(errors).length === 0) {
+      setSubmittingOTP(true);
       try {
         const response = await axios.post(
           `${verifyOtp}`,
@@ -164,7 +166,7 @@ function Login() {
           if (redirect_uri) {
             window.location.href = decodeURIComponent(redirect_uri);
           } else {
-            navigate("/dashboard/users-list");
+            navigate("/dashboard/home");
             toast.success("Login successful!");
           }
         } else {
@@ -178,6 +180,8 @@ function Login() {
             "An error occurred while verifying OTP. Please try again."
           );
         }
+      } finally {
+        setSubmittingOTP(false);
       }
     }
   };
@@ -194,7 +198,7 @@ function Login() {
   useEffect(() => {
     const token = Cookies.get("jwtToken");
     if (token !== undefined && !queryParameters.get("redirect_uri")) {
-      navigate("/dashboard/users-list");
+      navigate("/dashboard/home");
     }
   });
 
@@ -333,6 +337,7 @@ function Login() {
                     <Button
                       onClick={handleSubmitOTP}
                       variant="contained"
+                      disabled={otp.length !== 6 || submittingOTP}
                       sx={{
                         width: 300,
                         m: "auto",
@@ -340,7 +345,11 @@ function Login() {
                         bgcolor: "rgb(49, 38, 228)",
                       }}
                     >
-                      Submit OTP
+                      {submittingOTP ? (
+                        <CircularProgress size={24} sx={{ color: "white" }} />
+                      ) : (
+                        "Submit OTP"
+                      )}
                     </Button>
 
                     <Stack

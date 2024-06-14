@@ -2,9 +2,11 @@ import React, { useEffect } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { Box, Divider, Grid } from "@mui/material";
-import Sidebar from "./components/Sidebar";
+import Sidebar from "./components/sidebar/Sidebar";
 import { jwtDecode } from "jwt-decode"; // Correct import
 import NotAuthorised from "./NotAuthorised";
+
+import Header from "./components/header/Header";
 
 const ProtectedRoute = () => {
   const navigate = useNavigate();
@@ -14,7 +16,7 @@ const ProtectedRoute = () => {
     if (!token) {
       navigate("/");
     } else if (window.location.pathname === "/login") {
-      navigate("/dashboard/users-list");
+      navigate("/dashboard/home");
     }
   }, [navigate, token]);
 
@@ -40,14 +42,38 @@ const Content = () => {
 
   return (
     <Box>
-      <Grid container>
-        <Grid item xs={2}>
+      <Grid container sx={{ maxHeight: "100vh" }}>
+        <Grid
+          item
+          xs={2.5}
+          sx={{
+            bgcolor: "rgb(245, 245, 245)",
+            minHeight: "100vh",
+            maxHeight: "100vh",
+          }}
+        >
           <Sidebar />
         </Grid>
-        <Grid item xs={0.5}>
-          <Divider orientation="vertical" sx={{ borderStyle: "dashed" }} />
+        <Grid item>
+          <Divider
+            orientation="vertical"
+            sx={{
+              borderStyle: "dashed",
+              maxHeight: "100vh",
+              fontWeight: "bold",
+            }}
+          />
         </Grid>
-        <Grid item xs={9}>
+        <Grid
+          item
+          xs={9.49}
+          py={3}
+          px={2}
+          sx={{ overflowY: "auto", maxHeight: "100vh" }}
+          bgcolor={"rgb(255, 255, 255)"}
+        >
+          <Header />
+
           <Outlet />
         </Grid>
       </Grid>

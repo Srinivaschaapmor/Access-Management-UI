@@ -31,7 +31,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import UserAccess from "./UserAccess";
 import { FaRegTrashCan } from "react-icons/fa6";
-import Header from "../Header";
+import Header from "../header/Header";
 import { getUsers, getUsersWithAccess } from "../../apiCalls/Apicalls";
 function UserData({
   handleModalOpen,
@@ -109,10 +109,11 @@ function UserData({
   };
 
   const columns = [
-    { field: "EmpId", headerName: "Emp ID", width: 150 },
+    { field: "EmpId", headerName: "Emp ID", resizable: false, width: 150 },
     {
       field: "FullName",
       headerName: "Full Name",
+      resizable: false,
       width: 250,
       renderCell: (params) => {
         const { LastName, FirstName, Email } = params.row;
@@ -128,10 +129,16 @@ function UserData({
         );
       },
     },
-    { field: "Contact", headerName: "Mobile Number", width: 200 },
+    {
+      field: "Contact",
+      headerName: "Mobile Number",
+      resizable: false,
+      width: 200,
+    },
     {
       field: "access",
       headerName: "Access",
+      resizable: false,
       width: 200,
       renderCell: (params) => (
         <Stack direction={"row"} alignItems={"center"} mt={2} mr={10} gap={1}>
@@ -151,50 +158,17 @@ function UserData({
         </Stack>
       ),
     },
-    // {
-    //   field: "Actions",
-    //   headerName: "Actions",
-    //   width: 130,
-    //   renderCell: (params) => (
-    //     <Box>
-    //       <Stack direction={"row"} mt={2} gap={1}>
-    //         <IconButton
-    //           aria-label="edit"
-    //           size="small"
-    //           onClick={() => {
-    //             setUserData(params.row); // Set user data
-    //             handleModalOpen(); // Open the modal
-    //           }}
-    //         >
-    //           <EditIcon sx={{ fontSize: "19px" }} />
-    //         </IconButton>
-    //         <IconButton onClick={handleClickOpen} sx={{ width: "32px" }}>
-    //           <FaRegTrashCan
-    //             sx={{
-    //               fontSize: "15px",
-    //               mt: 0.5,
-    //               color: "grey",
-    //               cursor: "pointer",
-    //               width: "31px  ",
-    //             }}
-    //           />
-    //         </IconButton>
-    //       </Stack>
-    //     </Box>
-    //   ),
-    // },
   ];
 
   const spaceNames = ["All", ...new Set(rows?.map((row) => row?.SpaceName))];
 
   return (
     <Box>
-      <Header />
       <Box
         sx={{
           width: "100%",
           margin: "auto",
-          p: 4,
+          // p: 4,
           borderRadius: 3,
           mt: 1,
         }}
@@ -248,6 +222,7 @@ function UserData({
         </Box>
         <DataGrid
           rowHeight={80}
+          disableColumnMenu
           getRowId={(row) => row.EmpId}
           sx={{
             width: "100%",

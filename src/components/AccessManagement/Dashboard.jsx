@@ -16,7 +16,6 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UserData from "./UserData";
 
-import Header from "../Header";
 import { useLocation } from "react-router-dom/dist";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -34,7 +33,7 @@ function Dashboard() {
   return (
     <>
       <Box p={5} pt={1}>
-        <Box sx={{ mt: 2 }}>
+        <Box sx={{ mt: 5 }}>
           <UserData
             // handleModalOpen={handleModalOpen}
             // userData={userData}
