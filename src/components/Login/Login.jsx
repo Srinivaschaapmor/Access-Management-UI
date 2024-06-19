@@ -152,15 +152,15 @@ function Login() {
           const access = response.data.access;
           Cookies.set("jwtToken", jwtToken, {
             expires: 1 / 12,
-            domain: "localhost",
+            domain: "192.168.0.122",
             path: "/",
           });
           Cookies.set("userEmail", useremail, {
-            domain: "localhost",
+            domain: "192.168.0.122",
             path: "/",
           });
           Cookies.set("access", JSON.stringify(access), {
-            domain: "localhost",
+            domain: "192.168.0.122",
             path: "/",
           });
           if (redirect_uri) {
