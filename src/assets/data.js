@@ -26,4 +26,5 @@ export const accessData = [
   "Projects_Write",
   "Reports_View_And_Write",
   "Reports_Write",
+  "Careers_View",
 ];

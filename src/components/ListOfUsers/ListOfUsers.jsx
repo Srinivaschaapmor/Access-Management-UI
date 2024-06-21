@@ -47,6 +47,7 @@ function ListOfUsers() {
   const [openDrawer, setOpenDrawer] = useState(false);
   const [modalOpen, setModelOpen] = useState(false);
   const [selectedAreas, setSelectedAreas] = useState([]);
+  const [initialUserData, setInitialUserData] = useState({});
   const [userData, setUserData] = useState({
     FirstName: "",
     LastName: "",
@@ -211,7 +212,7 @@ function ListOfUsers() {
             userData,
             config
           );
-          if (response.status === 201) {
+          if (response.status === 200) {
             toast.success("User Details Updated Successfully");
             setFormErrors({});
             setUserData({});
@@ -400,7 +401,8 @@ function ListOfUsers() {
                   },
                 }}
                 onClick={() => {
-                  setUserData(currentRow); // Set user data
+                  setUserData(currentRow);
+                  setInitialUserData(currentRow); // Set user data
                   handleModalOpen(); // Open the modal
                   handlePopoverClose(); // Close the popover
                 }}
@@ -512,6 +514,7 @@ function ListOfUsers() {
         userData={userData}
         formErrors={formErrors}
         setIsSubmit={setIsSubmit}
+        initialUserData={initialUserData}
       />
       <AddAccess
         open={openDrawer}

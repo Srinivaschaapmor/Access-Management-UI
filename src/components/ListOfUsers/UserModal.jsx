@@ -14,7 +14,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 const style = {
   position: "absolute",
@@ -40,7 +40,16 @@ function EmployeeModal({
   userData,
   formErrors,
   setIsSubmit,
+  initialUserData,
 }) {
+  const [isChanged, setIsChanged] = useState(false);
+
+  useEffect(() => {
+    const isDataChanged =
+      JSON.stringify(userData) !== JSON.stringify(initialUserData);
+    setIsChanged(isDataChanged);
+  }, [userData, initialUserData]);
+
   const isAnyFieldEmpty = () => {
     return Object.values(userData).some((value) => value === "");
   };
@@ -371,7 +380,7 @@ function EmployeeModal({
               cancel
             </Button>
             <Button
-              disabled={isAnyFieldEmpty()}
+              disabled={!isChanged || isAnyFieldEmpty()}
               variant="contained"
               color="primary"
               // type="submit"

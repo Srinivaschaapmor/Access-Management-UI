@@ -1,14 +1,5 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  FormHelperText,
-  Paper,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import { Box, Paper, Stack, Typography } from "@mui/material";
+import React, { useEffect, useState, useRef } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 // import Logo from "../../assets/AapmorLogo.png";
@@ -18,6 +9,8 @@ import axios from "axios";
 import { loginEmail, verifyOtp } from "../../apiCalls/Apicalls";
 import { useSearchParams } from "react-router-dom";
 import Cookies from "js-cookie";
+import EmailForm from "./EmailForm";
+import OtpForm from "./OtpForm";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -29,19 +22,23 @@ function Login() {
   const [timer, setTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
   const [submittingOTP, setSubmittingOTP] = useState(false);
+  const otpFields = useRef([]);
   const navigate = useNavigate();
   const [queryParameters] = useSearchParams();
-  const otpFields = useRef([]);
-
+  console.log({ otpArray });
   const validateEmail = (email) => {
     const errors = {};
-    const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!email) {
+    const trimmedEmail = email.trim();
+    const regex =
+      /^[a-zA-Z._%+-][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+(?:\.[a-zA-Z]{2,})$/;
+
+    if (!trimmedEmail) {
       errors.email = "Field is required";
-    } else if (!regex.test(email)) {
+    } else if (!regex.test(trimmedEmail)) {
       errors.email = "Invalid email format";
     }
-    return errors;
+
+    return { errors, trimmedEmail };
   };
 
   const validateOtp = (otp) => {
@@ -56,50 +53,16 @@ function Login() {
     return errors;
   };
 
-  const handleEmailChange = (e) => {
-    const { value } = e.target;
-    setEmail(value);
-  };
-
-  const handleOtpChange = (index, event) => {
-    const { value } = event.target;
-    if (isNaN(value)) return;
-    const newOtpArray = [...otpArray];
-    newOtpArray[index] = value;
-    setOtpArray(newOtpArray);
-    setOtp(newOtpArray.join(""));
-
-    if (value !== "" && index < 5) {
-      otpFields.current[index + 1].focus();
-    }
-  };
-
-  const handlePaste = (event) => {
-    event.preventDefault();
-    const pasteData = event.clipboardData.getData("text");
-    if (!/^\d{6}$/.test(pasteData)) return;
-
-    const newOtpArray = pasteData.split("");
-    setOtpArray(newOtpArray);
-    setOtp(pasteData);
-    otpFields.current.forEach((field, index) => {
-      field.value = newOtpArray[index];
-    });
-  };
-
-  const handleKeyDown = (index, event) => {
-    if (event.key === "Backspace" && index > 0 && otpArray[index] === "") {
-      otpFields.current[index - 1].focus();
-    }
-  };
-
   const handleGetOTP = async () => {
-    const errors = validateEmail(email);
+    const { errors, trimmedEmail } = validateEmail(email);
     setFormErrors(errors);
+
     if (Object.keys(errors).length === 0) {
       setLoading(true);
       try {
-        const response = await axios.post(`${loginEmail}`, { email });
+        const response = await axios.post(`${loginEmail}`, {
+          email: trimmedEmail,
+        });
         setGetOtp(true);
         setCanResend(false);
         setTimer(30);
@@ -109,17 +72,16 @@ function Login() {
       } finally {
         setLoading(false);
       }
-    } else {
-      toast.error("Please enter a valid email.");
     }
   };
 
   const handleResendOTP = async () => {
     setLoading(true);
+    setCanResend(false);
+    setTimer(30);
     try {
       const response = await axios.post(`${loginEmail}`, { email });
-      setCanResend(false);
-      setTimer(30);
+
       toast.success("OTP resent successfully!");
     } catch (error) {
       toast.error("Error resending OTP. Please try again.");
@@ -190,9 +152,9 @@ function Login() {
     if (email.length > 0) {
       setFormErrors(validateEmail(email));
     }
-    if (otp.length > 0) {
-      setFormErrors(validateOtp(otp));
-    }
+    // if (otp.length > 0) {
+    //   setFormErrors(validateOtp(otp));
+    // }
   }, [email, otp]);
 
   useEffect(() => {
@@ -258,136 +220,32 @@ function Login() {
             </Box>
             <Box width={"50%"} p={5} pt={12}>
               <Stack>
-                <Typography variant="h6" fontWeight={600} m={"auto"}>
-                  AuthX AUTHENTICATION
-                </Typography>
                 {!getOtp ? (
-                  <>
-                    <Typography m={"auto"} pt={5}>
-                      Login with your email
-                    </Typography>
-                    <TextField
-                      type="email"
-                      value={email}
-                      helperText={formErrors.email}
-                      FormHelperTextProps={{ style: { color: "red" } }}
-                      onChange={handleEmailChange}
-                      placeholder="Enter your email"
-                      size="small"
-                      sx={{ width: 300, m: "auto", pt: 5 }}
-                    ></TextField>
-                    <Button
-                      variant="contained"
-                      disabled={email.length === 0}
-                      sx={{
-                        width: 300,
-                        m: "auto",
-                        mt: 5,
-                        bgcolor: "rgb(49, 38, 228)",
-                      }}
-                      onClick={handleGetOTP}
-                    >
-                      {loading ? (
-                        <CircularProgress size={24} sx={{ color: "white" }} />
-                      ) : (
-                        "GET OTP"
-                      )}
-                    </Button>
-                  </>
+                  <EmailForm
+                    email={email}
+                    setEmail={setEmail}
+                    formErrors={formErrors}
+                    handleGetOTP={handleGetOTP}
+                    loading={loading}
+                  />
                 ) : (
-                  <>
-                    <Typography m={"auto"} pt={5}>
-                      Enter the OTP
-                    </Typography>
-                    <Stack
-                      direction={"row"}
-                      gap={2}
-                      mt={4}
-                      textAlign={"center"}
-                      onPaste={handlePaste}
-                    >
-                      {otpArray.map((digit, index) => (
-                        <TextField
-                          key={index}
-                          inputRef={(el) => (otpFields.current[index] = el)}
-                          variant="outlined"
-                          size="small"
-                          sx={{ width: 50, height: 50 }}
-                          inputProps={{ style: { textAlign: "center" } }}
-                          value={digit}
-                          onChange={(e) => handleOtpChange(index, e)}
-                          onKeyDown={(e) => handleKeyDown(index, e)}
-                          autoFocus={index === 0}
-                        />
-                      ))}
-                    </Stack>
-                    <FormHelperText sx={{ color: "red", fontSize: 12 }}>
-                      {formErrors.otp}
-                    </FormHelperText>
-                    <Typography
-                      sx={{
-                        color: "green",
-                        textAlign: "center",
-                        mt: 2,
-                        fontSize: 12,
-                      }}
-                    >
-                      OTP sent to {email}
-                    </Typography>
-                    <Button
-                      onClick={handleSubmitOTP}
-                      variant="contained"
-                      disabled={otp.length !== 6 || submittingOTP}
-                      sx={{
-                        width: 300,
-                        m: "auto",
-                        mt: 3,
-                        bgcolor: "rgb(49, 38, 228)",
-                      }}
-                    >
-                      {submittingOTP ? (
-                        <CircularProgress size={24} sx={{ color: "white" }} />
-                      ) : (
-                        "Submit OTP"
-                      )}
-                    </Button>
-
-                    <Stack
-                      direction={"row"}
-                      justifyContent={"space-between"}
-                      alignItems={"center"}
-                    >
-                      <Typography fontSize={13} mt={5}>
-                        Incorrect Email?{" "}
-                        <span
-                          onClick={() => setGetOtp(false)}
-                          style={{
-                            textDecoration: "underline",
-                            fontWeight: 600,
-                            cursor: "pointer",
-                          }}
-                        >
-                          Click Here
-                        </span>
-                      </Typography>
-                      <Typography fontSize={13} mt={5}>
-                        {canResend ? (
-                          <span
-                            onClick={handleResendOTP}
-                            style={{
-                              textDecoration: "underline",
-                              fontWeight: 600,
-                              cursor: "pointer",
-                            }}
-                          >
-                            Resend OTP
-                          </span>
-                        ) : (
-                          <span>Resend OTP in {timer} seconds</span>
-                        )}
-                      </Typography>
-                    </Stack>
-                  </>
+                  <OtpForm
+                    email={email}
+                    otpArray={otpArray}
+                    setOtpArray={setOtpArray}
+                    otp={otp}
+                    setOtp={setOtp}
+                    formErrors={formErrors}
+                    // handlePaste={handlePaste}
+                    // handleKeyDown={handleKeyDown}
+                    handleSubmitOTP={handleSubmitOTP}
+                    submittingOTP={submittingOTP}
+                    canResend={canResend}
+                    timer={timer}
+                    handleResendOTP={handleResendOTP}
+                    setGetOtp={setGetOtp}
+                    otpFields={otpFields}
+                  />
                 )}
               </Stack>
             </Box>
