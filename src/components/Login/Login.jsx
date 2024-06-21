@@ -152,15 +152,15 @@ function Login() {
           const access = response.data.access;
           Cookies.set("jwtToken", jwtToken, {
             expires: 1 / 12,
-            domain: "192.168.0.122",
+            domain: process.env.REACT_APP_COOKIES_DOMAIN,
             path: "/",
           });
           Cookies.set("userEmail", useremail, {
-            domain: "192.168.0.122",
+            domain: process.env.REACT_APP_COOKIES_DOMAIN,
             path: "/",
           });
           Cookies.set("access", JSON.stringify(access), {
-            domain: "192.168.0.122",
+            domain: process.env.REACT_APP_COOKIES_DOMAIN,
             path: "/",
           });
           if (redirect_uri) {

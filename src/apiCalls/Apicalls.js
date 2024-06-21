@@ -1,14 +1,11 @@
-// const localHost = "http://127.0.0.1:5000";
-// const localHost = "https://access-managment-api.azurewebsites.net";
-// const localHost = "http://192.168.0.122:4500";
+const host = process.env.REACT_APP_HOST;
 
-const localHost = "http://192.168.0.122:4500";
-export const loginEmail = `${localHost}/login/send-otp`;
-export const verifyOtp = `${localHost}/login/verify-otp`;
-export const editAccess = `${localHost}/users/update/access`;
-export const getUsers = `${localHost}/endusers`;
-export const getUsersWithAccess = `${localHost}/users_with_access`;
-export const updateUser = `${localHost}/users/update`;
-export const createUser = `${localHost}/create_user`;
-export const DeleteUser = `${localHost}/users/delete`;
-export const deleteUserAccess = `${localHost}/users/delete/access`;
+export const loginEmail = `${host}/login/send-otp`;
+export const verifyOtp = `${host}/login/verify-otp`;
+export const editAccess = `${host}/users/update/access`;
+export const getUsers = `${host}/endusers`;
+export const getUsersWithAccess = `${host}/users_with_access`;
+export const updateUser = `${host}/users/update`;
+export const createUser = `${host}/create_user`;
+export const DeleteUser = `${host}/users/delete`;
+export const deleteUserAccess = `${host}/users/delete/access`;
