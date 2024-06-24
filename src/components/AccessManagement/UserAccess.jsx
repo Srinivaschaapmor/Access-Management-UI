@@ -18,7 +18,6 @@ import {
 } from "@mui/material";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { CheckBox } from "@mui/icons-material";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
@@ -58,16 +57,16 @@ function UserAccess({
   const handleCheckboxChange = (event, value) => {
     setSelectedAreas(value);
   };
+
   const empid = selectedRow?._id;
+
   const handleAddAreas = async () => {
     try {
-      // Make sure to replace 'empid' with the actual EmpId of the user
-      // Assuming userData contains EmpId of the user
       if (!empid) {
         console.error("EmpId is missing.");
         return;
       }
-      // console.log("COOKIE: ", Cookies.get("jwtToken"));
+
       let config = {
         headers: {
           Authorization: Cookies.get("jwtToken"),
@@ -80,16 +79,16 @@ function UserAccess({
         { Access: selectedAreas },
         config
       );
-      // refresh table rows
+
       fetchEndUsersWithAccess();
       toast.success("Access Updated Succesfully");
       onClose();
       setSelectedAreas([]);
     } catch (error) {
       toast.error("Error updating access areas");
-      // Handle error, if needed
     }
   };
+
   const handleDeleteArea = async (area) => {
     try {
       setAreas((prevAreas) => prevAreas.filter((a) => a !== area));
@@ -110,10 +109,10 @@ function UserAccess({
     } catch (error) {
       console.error("Error deleting area:", error);
       toast.error("Failed to delete access");
-      // Handle error if needed
     }
   };
-  const handleDeleteAllAccess = async (area) => {
+
+  const handleDeleteAllAccess = async () => {
     try {
       const config = {
         headers: {
@@ -124,7 +123,6 @@ function UserAccess({
 
       const response = await axios.delete(
         `${deleteAllAccess}/${empid}`,
-
         config
       );
 
@@ -136,7 +134,6 @@ function UserAccess({
     } catch (error) {
       console.error("Error deleting area:", error);
       toast.error("Failed to delete access");
-      // Handle error if needed
     }
   };
 
@@ -147,11 +144,8 @@ function UserAccess({
           direction={"row"}
           alignContent={"center"}
           justifyContent={"space-between"}
-          // gap={1}
           pt={4}
           px={2}
-          // pl={3}
-          // pr={5}
         >
           <IconButton onClick={onClose}>
             <KeyboardBackspaceIcon />
@@ -166,10 +160,8 @@ function UserAccess({
             User Access Settings
           </Typography>
           <Button
-            // variant="contained"
             onClick={handleDeleteAllAccess}
             sx={{
-              // bgcolor: "rgb(207, 237, 231)",
               border: "1px solid",
               color: "Red",
               textTransform: "capitalize",
@@ -225,7 +217,7 @@ function UserAccess({
                 getOptionLabel={(option) => option}
                 renderOption={(props, option, { selected }) => (
                   <li {...props}>
-                    <Checkbox style={{ marginRight: 8 }} />
+                    <Checkbox style={{ marginRight: 8 }} checked={selected} />
                     {option}
                   </li>
                 )}

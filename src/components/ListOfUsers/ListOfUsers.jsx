@@ -125,7 +125,8 @@ function ListOfUsers() {
     const errors = {};
     // Email validation regex
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const specialCharsRegex = /[!@#$%^&*(),.?":{}|<>]/; // Regex to detect special characters
+    const specialCharsRegex = /[!@#$%^&*(),?":{}|<>]/; // Regex to detect special characters except dots
+    const specialCharsRegexWithoutDot = /[!@#$%^&*(),.?":{}|<>]/; // Regex to detect special characters including dots
     const emojiRegex =
       /[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}]/u; // Regex to detect emojis
     const leadingTrailingSpacesRegex = /^\s+|\s+$/g; // Regex to detect leading and trailing spaces
@@ -157,7 +158,8 @@ function ListOfUsers() {
       if (!value) {
         errors[fieldName] = "* Field is required";
       } else if (
-        specialCharsRegex.test(value) ||
+        (fieldName !== "JobTitle" && specialCharsRegexWithoutDot.test(value)) ||
+        (fieldName === "JobTitle" && specialCharsRegex.test(value)) ||
         emojiRegex.test(value) ||
         leadingTrailingSpacesRegex.test(value)
       ) {
@@ -312,6 +314,7 @@ function ListOfUsers() {
     {
       field: "AccessNote",
       headerName: "Access Note",
+      resizable: false,
       width: 200,
       sortable: false,
       renderCell: (params) => {
