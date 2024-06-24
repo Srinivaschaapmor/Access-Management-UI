@@ -57,7 +57,7 @@ function Header() {
         <IconButton onClick={toggleSearch}>
           <Tooltip title="Search">
             {" "}
-            <SearchIcon sx={{ color: "rgb(138, 138, 138)" }} />
+            {/* <SearchIcon sx={{ color: "rgb(138, 138, 138)" }} /> */}
           </Tooltip>
         </IconButton>
         {showSearch && (
@@ -94,15 +94,17 @@ function Header() {
           </Badge>
         </Stack> */}
         <Tooltip title="Settings">
-          <SettingsOutlinedIcon sx={{ color: "rgb(112, 113, 114)" }} />
+          {/* <SettingsOutlinedIcon sx={{ color: "rgb(112, 113, 114)" }} /> */}
         </Tooltip>
         <Stack direction={"row"} gap={2}>
           <Box>
-            <Avatar
-              src="https://img.freepik.com/premium-photo/graphic-designer-digital-avatar-generative-ai_934475-9292.jpg"
-              onClick={handleClick}
-              sx={{ cursor: "pointer", bgcolor: "rgb(92, 101, 254)" }}
-            ></Avatar>
+            <Tooltip title="Profile">
+              <Avatar
+                src="https://img.freepik.com/premium-photo/graphic-designer-digital-avatar-generative-ai_934475-9292.jpg"
+                onClick={handleClick}
+                sx={{ cursor: "pointer", bgcolor: "rgb(92, 101, 254)" }}
+              ></Avatar>
+            </Tooltip>
             <Popper id={id} open={openPopper} anchorEl={anchorEl}>
               <Box>
                 <Menu

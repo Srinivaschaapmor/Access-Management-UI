@@ -90,6 +90,11 @@ const OtpForm = ({
             onChange={(e) => handleOtpChange(index, e)}
             onKeyDown={(e) => handleKeyDown(index, e)}
             autoFocus={index === 0}
+            onKeyPress={(event) => {
+              if (event.key === "Enter") {
+                handleSubmitOTP();
+              }
+            }}
           />
         ))}
       </Stack>

@@ -17,7 +17,7 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
-import { editAccess } from "../../apiCalls/Apicalls";
+import { deleteAllAccess, editAccess } from "../../apiCalls/Apicalls";
 import { accessData } from "../../assets/data";
 import Done from "../../assets/done.png";
 function AddAccess({
@@ -31,6 +31,7 @@ function AddAccess({
   userData,
   filteredOptions,
   setFilteredOptions,
+  fetchUsers,
 }) {
   useEffect(() => {
     const filteredOptions = accessData.filter(
@@ -68,7 +69,13 @@ function AddAccess({
         { Access: selectedareas },
         config
       );
+      // const response = await axios.delete(
+      //   `${deleteAllAccess}/${empid}`,
+      //   // { Access: selectedareas },
+      //   config
+      // );
 
+      fetchUsers();
       toast.success("Access Updated Successfully");
       onClose(); // Close the modal upon success
       setSelectedareas([]);

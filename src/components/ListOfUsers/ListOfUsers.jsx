@@ -274,12 +274,19 @@ function ListOfUsers() {
   const handleClose = () => setOpen(false);
   // Define columns for DataGrid
   const columns = [
-    { field: "EmpId", headerName: "Emp ID", width: 100, resizable: false },
+    {
+      field: "EmpId",
+      headerName: "Emp ID",
+      width: 100,
+      resizable: false,
+      sortable: false,
+    },
     {
       field: "FullName",
       resizable: false,
       headerName: "Full Name",
       width: 250,
+      sortable: false,
       renderCell: (params) => {
         const { LastName, FirstName, Email } = params.row;
         return (
@@ -299,11 +306,14 @@ function ListOfUsers() {
       headerName: "Mobile Number",
       width: 150,
       resizable: false,
+      disableColumnSorting: true,
+      sortable: false,
     },
     {
       field: "AccessNote",
       headerName: "Access Note",
       width: 200,
+      sortable: false,
       renderCell: (params) => {
         const hasAccess = params.row.Access && params.row.Access.length > 0;
         return (
@@ -318,6 +328,7 @@ function ListOfUsers() {
       headerName: "Actions",
       resizable: false,
       width: 150,
+      sortable: false,
       renderCell: (params) => (
         <Box>
           <Stack direction={"row"} mt={2} gap={1}>
@@ -529,6 +540,7 @@ function ListOfUsers() {
         userData={userData}
         selectedareas={selectedareas}
         setSelectedareas={setSelectedareas}
+        fetchUsers={fetchUsers}
       />
       <Dialog open={deleteModalopen} onClose={handleDeleteClose}>
         <DialogTitle>{"Confirm Deletion"}</DialogTitle>

@@ -40,10 +40,21 @@ const EmailForm = ({ email, setEmail, formErrors, handleGetOTP, loading }) => {
         helperText={formErrors.email || ""}
         FormHelperTextProps={{ style: { color: "red" } }}
         onChange={handleEmailChange}
+        label={
+          <span>
+            Email<span style={{ color: "red" }}>*</span>
+          </span>
+        }
         placeholder="Enter your email"
         size="small"
-        sx={{ width: 300, m: "auto", pt: 5 }}
-      ></TextField>
+        sx={{ width: 300, m: "auto", mt: 5 }}
+        onKeyPress={(event) => {
+          if (event.key === "Enter") {
+            handleGetOTP();
+          }
+        }}
+      />
+
       <Button
         variant="contained"
         disabled={!validEmail || !!formErrors.email || email.length === 0}

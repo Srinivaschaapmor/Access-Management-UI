@@ -68,7 +68,7 @@ function Login() {
         setTimer(30);
         toast.success("OTP sent successfully!");
       } catch (error) {
-        toast.error("Error sending OTP. Please try again.");
+        toast.error("Please check your Network and try again.");
       } finally {
         setLoading(false);
       }
@@ -76,12 +76,12 @@ function Login() {
   };
 
   const handleResendOTP = async () => {
+    setOtpArray(new Array(6).fill(""));
     setLoading(true);
     setCanResend(false);
     setTimer(30);
     try {
       const response = await axios.post(`${loginEmail}`, { email });
-
       toast.success("OTP resent successfully!");
     } catch (error) {
       toast.error("Error resending OTP. Please try again.");

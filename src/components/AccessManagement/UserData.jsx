@@ -109,11 +109,18 @@ function UserData({
   };
 
   const columns = [
-    { field: "EmpId", headerName: "Emp ID", resizable: false, width: 150 },
+    {
+      field: "EmpId",
+      headerName: "Emp ID",
+      resizable: false,
+      width: 150,
+      sortable: false,
+    },
     {
       field: "FullName",
       headerName: "Full Name",
       resizable: false,
+      sortable: false,
       width: 250,
       renderCell: (params) => {
         const { LastName, FirstName, Email } = params.row;
@@ -133,12 +140,14 @@ function UserData({
       field: "Contact",
       headerName: "Mobile Number",
       resizable: false,
+      sortable: false,
       width: 200,
     },
     {
       field: "access",
       headerName: "Access",
       resizable: false,
+      sortable: false,
       width: 200,
       renderCell: (params) => (
         <Stack direction={"row"} alignItems={"center"} mt={2} mr={10} gap={1}>

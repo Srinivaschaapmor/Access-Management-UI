@@ -22,7 +22,11 @@ import { CheckBox } from "@mui/icons-material";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
-import { deleteUserAccess, editAccess } from "../../apiCalls/Apicalls";
+import {
+  deleteAllAccess,
+  deleteUserAccess,
+  editAccess,
+} from "../../apiCalls/Apicalls";
 import { accessData } from "../../assets/data";
 
 function UserAccess({
@@ -54,11 +58,11 @@ function UserAccess({
   const handleCheckboxChange = (event, value) => {
     setSelectedAreas(value);
   };
-
+  const empid = selectedRow?._id;
   const handleAddAreas = async () => {
     try {
       // Make sure to replace 'empid' with the actual EmpId of the user
-      const empid = selectedRow?._id; // Assuming userData contains EmpId of the user
+      // Assuming userData contains EmpId of the user
       if (!empid) {
         console.error("EmpId is missing.");
         return;
@@ -109,6 +113,32 @@ function UserAccess({
       // Handle error if needed
     }
   };
+  const handleDeleteAllAccess = async (area) => {
+    try {
+      const config = {
+        headers: {
+          Authorization: Cookies.get("jwtToken"),
+          "Content-Type": "application/json",
+        },
+      };
+
+      const response = await axios.delete(
+        `${deleteAllAccess}/${empid}`,
+
+        config
+      );
+
+      if (response.status === 200) {
+        toast.success("All Access Deleted Succesfully");
+        onClose();
+        fetchEndUsersWithAccess();
+      }
+    } catch (error) {
+      console.error("Error deleting area:", error);
+      toast.error("Failed to delete access");
+      // Handle error if needed
+    }
+  };
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
@@ -116,10 +146,12 @@ function UserAccess({
         <Stack
           direction={"row"}
           alignContent={"center"}
-          gap={1}
+          justifyContent={"space-between"}
+          // gap={1}
           pt={4}
-          pl={3}
-          pr={5}
+          px={2}
+          // pl={3}
+          // pr={5}
         >
           <IconButton onClick={onClose}>
             <KeyboardBackspaceIcon />
@@ -127,12 +159,26 @@ function UserAccess({
           <Typography
             variant="h6"
             mt={0.5}
-            ml={10}
+            ml={6}
             sx={{ fontWeight: "600" }}
             textAlign={"center"}
           >
             User Access Settings
           </Typography>
+          <Button
+            // variant="contained"
+            onClick={handleDeleteAllAccess}
+            sx={{
+              // bgcolor: "rgb(207, 237, 231)",
+              border: "1px solid",
+              color: "Red",
+              textTransform: "capitalize",
+              fontWeight: 600,
+              fontSize: 10,
+            }}
+          >
+            Delete All Access
+          </Button>
         </Stack>
 
         <Box>
@@ -195,14 +241,15 @@ function UserAccess({
               />
               <Stack direction={"row"} justifyContent={"flex-end"} mt={2}>
                 <Button
+                  disabled={selectedAreas.length === 0}
                   variant="contained"
                   onClick={handleAddAreas}
                   sx={{
-                    bgcolor: "rgb(207, 237, 231)",
-                    color: "rgb(67, 167, 111)",
+                    bgcolor: "black",
+                    color: "white",
                   }}
                 >
-                  Add Areas
+                  Add Access
                 </Button>
               </Stack>
             </Box>
