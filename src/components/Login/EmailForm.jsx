@@ -57,7 +57,7 @@ const EmailForm = ({ email, setEmail, formErrors, handleGetOTP, loading }) => {
 
       <Button
         variant="contained"
-        disabled={!validEmail || !!formErrors.email || email.length === 0}
+        // disabled={!validEmail || !!formErrors.email || email.length === 0}
         sx={{
           width: 300,
           m: "auto",
