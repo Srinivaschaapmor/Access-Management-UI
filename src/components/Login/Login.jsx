@@ -120,10 +120,12 @@ function Login() {
           Cookies.set("userEmail", useremail, {
             domain: process.env.REACT_APP_COOKIES_DOMAIN,
             path: "/",
+            expires: 1 / 12,
           });
           Cookies.set("access", JSON.stringify(access), {
             domain: process.env.REACT_APP_COOKIES_DOMAIN,
             path: "/",
+            expires: 1 / 12,
           });
           if (redirect_uri) {
             window.location.href = decodeURIComponent(redirect_uri);

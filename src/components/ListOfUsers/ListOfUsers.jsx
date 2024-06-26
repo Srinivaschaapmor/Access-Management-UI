@@ -7,6 +7,7 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
+  Modal,
   Popover,
   Stack,
   Tooltip,
@@ -545,22 +546,59 @@ function ListOfUsers() {
         setSelectedareas={setSelectedareas}
         fetchUsers={fetchUsers}
       />
-      <Dialog open={deleteModalopen} onClose={handleDeleteClose}>
-        <DialogTitle>{"Confirm Deletion"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this user?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleDelete} color="primary" autoFocus>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Modal open={deleteModalopen} onClose={handleDeleteClose}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "30%",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: 2,
+            px: 4,
+            py: 5,
+            maxHeight: 500,
+            textAlign: "center",
+          }}
+        >
+          <Typography
+            id="modal-modal-title"
+            variant="body1"
+            component="paragraph"
+            align={"center"}
+            fontWeight={"bold"}
+          >
+            {`  Are you sure you want to delete this user?`}
+          </Typography>
+          <Stack direction={"row"} mt={3} gap={3} justifyContent={"center"}>
+            <Button
+              variant="outlined"
+              onClick={handleDeleteClose}
+              sx={{ color: "black", borderColor: "black" }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{
+                bgcolor: "#FF4B4B",
+                borderColor: "#FF4B4B",
+                color: "white",
+                ":hover": {
+                  bgcolor: "white",
+                  color: "#FF4B4B",
+                  borderColor: "#FF4B4B",
+                },
+              }}
+              onClick={handleDelete}
+            >
+              Delete
+            </Button>
+          </Stack>
+        </Box>
+      </Modal>
       <ViewUser
         open={open}
         handleClose={handleClose}
