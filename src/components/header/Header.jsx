@@ -128,7 +128,7 @@ function Header() {
                       <Typography>{username}</Typography>
                     </Stack>
                   </MenuItem>
-                  <MenuItem>Account Settings</MenuItem>
+                  <MenuItem disabled>Account Settings</MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
               </Box>

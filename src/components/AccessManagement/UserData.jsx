@@ -179,6 +179,7 @@ function UserData({
           margin: "auto",
           // p: 4,
           borderRadius: 3,
+
           mt: 1,
         }}
       >
@@ -203,7 +204,14 @@ function UserData({
             Add Access
           </Button> */}
         </Stack>
-        <Box height={50} bgcolor={"white"} pl={2} mt={3}>
+        <Box
+          height={50}
+          bgcolor={"white"}
+          pl={2}
+          mt={3}
+          border="1px solid rgb(168, 168, 168)"
+          borderRadius={5}
+        >
           <Tabs
             value={selectedSpaceName}
             onChange={handleTabChange}
@@ -211,9 +219,13 @@ function UserData({
             sx={{
               minHeight: 50,
               height: 50,
-              ".css-1aquho2-MuiTabs-indicator": { bgcolor: "rgb(30, 34, 40)" },
-              ".css-1p9i4sw-MuiButtonBase-root-MuiTab-root.Mui-selected ": {
-                color: "black",
+              ".css-1aquho2-MuiTabs-indicator": {
+                bgcolor: "rgb(30, 34, 40)",
+              },
+
+              ".Mui-selected": {
+                color: `black`,
+                fontWeight: 700,
               },
             }}
           >
@@ -223,6 +235,12 @@ function UserData({
                 value={space}
                 sx={{
                   textTransform: "capitalize",
+
+                  ":hover": {
+                    transition: "color 0.2s ease",
+                    color: "black",
+                    fontWeight: 600,
+                  },
                 }}
                 label={space}
               />
@@ -237,6 +255,7 @@ function UserData({
             width: "100%",
             margin: "auto",
             bgcolor: "white",
+
             p: 2,
             borderRadius: "0px 2px 2px 2px",
             boxShadow: "0 2px 2px rgba(0, 0, 0, 0.1)",

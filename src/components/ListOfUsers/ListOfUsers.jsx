@@ -7,6 +7,7 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
+  Modal,
   Popover,
   Stack,
   Tooltip,
@@ -125,7 +126,8 @@ function ListOfUsers() {
     const errors = {};
     // Email validation regex
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const specialCharsRegex = /[!@#$%^&*(),.?":{}|<>]/; // Regex to detect special characters
+    const specialCharsRegex = /[!@#$%^&*(),?":{}|<>]/; // Regex to detect special characters except dots
+    const specialCharsRegexWithoutDot = /[!@#$%^&*(),.?":{}|<>]/; // Regex to detect special characters including dots
     const emojiRegex =
       /[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{FE00}-\u{FE0F}\u{1F900}-\u{1F9FF}]/u; // Regex to detect emojis
     const leadingTrailingSpacesRegex = /^\s+|\s+$/g; // Regex to detect leading and trailing spaces
@@ -157,7 +159,8 @@ function ListOfUsers() {
       if (!value) {
         errors[fieldName] = "* Field is required";
       } else if (
-        specialCharsRegex.test(value) ||
+        (fieldName !== "JobTitle" && specialCharsRegexWithoutDot.test(value)) ||
+        (fieldName === "JobTitle" && specialCharsRegex.test(value)) ||
         emojiRegex.test(value) ||
         leadingTrailingSpacesRegex.test(value)
       ) {
@@ -312,6 +315,7 @@ function ListOfUsers() {
     {
       field: "AccessNote",
       headerName: "Access Note",
+      resizable: false,
       width: 200,
       sortable: false,
       renderCell: (params) => {
@@ -542,22 +546,59 @@ function ListOfUsers() {
         setSelectedareas={setSelectedareas}
         fetchUsers={fetchUsers}
       />
-      <Dialog open={deleteModalopen} onClose={handleDeleteClose}>
-        <DialogTitle>{"Confirm Deletion"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this user?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDeleteClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleDelete} color="primary" autoFocus>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <Modal open={deleteModalopen} onClose={handleDeleteClose}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "30%",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: 2,
+            px: 4,
+            py: 5,
+            maxHeight: 500,
+            textAlign: "center",
+          }}
+        >
+          <Typography
+            id="modal-modal-title"
+            variant="body1"
+            component="paragraph"
+            align={"center"}
+            fontWeight={"bold"}
+          >
+            {`  Are you sure you want to delete this user?`}
+          </Typography>
+          <Stack direction={"row"} mt={3} gap={3} justifyContent={"center"}>
+            <Button
+              variant="outlined"
+              onClick={handleDeleteClose}
+              sx={{ color: "black", borderColor: "black" }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{
+                bgcolor: "#FF4B4B",
+                borderColor: "#FF4B4B",
+                color: "white",
+                ":hover": {
+                  bgcolor: "white",
+                  color: "#FF4B4B",
+                  borderColor: "#FF4B4B",
+                },
+              }}
+              onClick={handleDelete}
+            >
+              Delete
+            </Button>
+          </Stack>
+        </Box>
+      </Modal>
       <ViewUser
         open={open}
         handleClose={handleClose}
