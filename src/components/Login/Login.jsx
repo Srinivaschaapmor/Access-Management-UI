@@ -25,7 +25,7 @@ function Login() {
   const otpFields = useRef([]);
   const navigate = useNavigate();
   const [queryParameters] = useSearchParams();
-  console.log({ otpArray });
+
   const validateEmail = (email) => {
     const errors = {};
     const trimmedEmail = email.trim();
@@ -67,6 +67,8 @@ function Login() {
         setCanResend(false);
         setTimer(30);
         toast.success("OTP sent successfully!");
+
+        // Set a timeout to show "OTP expired" toast after 2 minutes
       } catch (error) {
         toast.error("Please check your Network and try again.");
       } finally {
@@ -83,6 +85,8 @@ function Login() {
     try {
       const response = await axios.post(`${loginEmail}`, { email });
       toast.success("OTP resent successfully!");
+
+      // Set a timeout to show "OTP expired" toast after 2 minutes
     } catch (error) {
       toast.error("Error resending OTP. Please try again.");
     } finally {
@@ -137,8 +141,11 @@ function Login() {
           toast.error("Invalid OTP.");
         }
       } catch (error) {
+        console.log({ error });
         if (error.response && error.response.status === 403) {
           toast.error("Access denied for this email address.");
+        } else if (error.response.status === 410) {
+          toast.error(error.response.data.error);
         } else {
           toast.error(
             "An error occurred while verifying OTP. Please try again."
