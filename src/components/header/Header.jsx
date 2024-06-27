@@ -69,14 +69,14 @@ function Header() {
           />
         )}
       </Box>
-      <Box boxShadow="0px 4px 8px rgba(0, 0, 0, 0.1)" p={1} borderRadius={2}>
+      <Box p={1} borderRadius={2}>
         <Typography
           fontWeight={600}
           fontSize={20}
           textTransform={"uppercase"}
-          color={"rgb(107, 99, 202)"}
+          // color={"rgb(107, 99, 202)"}
         >
-          OrgX Authorization Service
+          Authorization Service
         </Typography>
       </Box>
       <Stack direction={"row"} gap={3} alignItems={"center"}>

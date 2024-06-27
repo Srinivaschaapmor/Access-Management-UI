@@ -37,7 +37,7 @@ function Sidebar() {
           "&::-webkit-scrollbar": { display: "none" },
         }}
       >
-        <Typography
+        {/* <Typography
           sx={{
             fontSize: 12,
             fontWeight: 600,
@@ -46,7 +46,7 @@ function Sidebar() {
           }}
         >
           MANAGEMENT
-        </Typography>
+        </Typography> */}
         <Stack gap={2}>
           {sidebarItems.map((item, index) => (
             <Stack

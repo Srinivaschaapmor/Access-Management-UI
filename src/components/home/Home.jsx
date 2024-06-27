@@ -83,7 +83,7 @@ function Home() {
                   {item.label}
                 </Typography>
                 <Typography fontSize={18} mt={1} fontWeight={600}>
-                  {item.value}
+                  {item.value ? item.value : "N/A"}
                 </Typography>
               </Box>
             </Grid>
