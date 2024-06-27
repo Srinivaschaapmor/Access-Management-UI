@@ -140,6 +140,7 @@ const OtpForm = ({
             onClick={() => {
               setGetOtp(false);
               setOtp("");
+              setOtpArray(new Array(6).fill(""));
             }}
             style={{
               textDecoration: "underline",
