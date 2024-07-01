@@ -30,12 +30,18 @@ function Login() {
     const errors = {};
     const trimmedEmail = email.trim();
     const regex =
-      /^[a-zA-Z._%+-][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+(?:\.[a-zA-Z]{2,})$/;
+      /^[a-zA-Z._%+-][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
     if (!trimmedEmail) {
       errors.email = "Field is required";
     } else if (!regex.test(trimmedEmail)) {
       errors.email = "Invalid email format";
+    } else {
+      // Split the domain part by dots
+      const domainParts = trimmedEmail.split("@")[1].split(".");
+      if (domainParts.length > 3) {
+        errors.email = "Invalid email format";
+      }
     }
 
     return { errors, trimmedEmail };
@@ -145,6 +151,8 @@ function Login() {
         if (error.response && error.response.status === 403) {
           toast.error("Access denied for this email address.");
         } else if (error.response.status === 410) {
+          toast.error(error.response.data.error);
+        } else if (error.response.status === 401) {
           toast.error(error.response.data.error);
         } else {
           toast.error(

@@ -7,6 +7,7 @@ import ProtectedRoute from "./protectedLayout";
 
 import ListOfUsers from "./components/ListOfUsers/ListOfUsers";
 import Home from "./components/home/Home";
+import NotAuthorised from "./NotAuthorised";
 // import Data from "./Data/Data";
 // import { Json } from "./dataFolder";
 
@@ -25,7 +26,7 @@ const Router = () => {
           {/* <Route path="/user-access-settings/:id" element={<UserAccess />} /> */}
         </Route>
 
-        <Route path="*" element={<p>Invalid Path</p>} />
+        <Route path="*" element={<NotAuthorised />} />
       </Routes>
     </BrowserRouter>
   );
