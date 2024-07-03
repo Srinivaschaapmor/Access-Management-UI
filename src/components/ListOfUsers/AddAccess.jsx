@@ -17,8 +17,12 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie";
-import { deleteAllAccess, editAccess } from "../../apiCalls/Apicalls";
-import { accessData } from "../../assets/data";
+import {
+  deleteAllAccess,
+  editAccess,
+  fetchMasterData,
+} from "../../apiCalls/Apicalls";
+
 import Done from "../../assets/done.png";
 function AddAccess({
   open,
@@ -33,8 +37,37 @@ function AddAccess({
   setFilteredOptions,
   fetchUsers,
 }) {
+  const [accessData, setAccessData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const category = "Orgx";
   useEffect(() => {
-    const filteredOptions = accessData.filter(
+    const fetchData = async () => {
+      try {
+        let config = {
+          headers: {
+            Authorization: Cookies.get("jwtToken"),
+            "Content-Type": "application/json",
+          },
+        };
+        const response = await axios.get(
+          `${fetchMasterData}${category}`,
+          config
+        );
+        setAccessData(response.data);
+      } catch (error) {
+        setError(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  console.log({ accessData });
+  useEffect(() => {
+    const filteredOptions = accessData?.filter(
       (option) => !userData?.Access?.includes(option)
     );
     setFilteredOptions(filteredOptions);
@@ -87,6 +120,10 @@ function AddAccess({
   const handleSelectAll = () => {
     setSelectedareas(filteredOptions);
   };
+
+  console.log({ userData });
+  console.log({ selectedareas });
+  console.log({ accessData });
 
   return (
     <Modal open={open}>
@@ -161,47 +198,49 @@ function AddAccess({
           </Stack>
         ) : (
           <>
-            <Box sx={{ maxHeight: 200, overflowY: "auto" }}>
-              {" "}
-              {/* Added maxHeight and overflow */}
-              <Autocomplete
-                multiple
-                options={filteredOptions}
-                value={selectedareas}
-                onChange={handleCheckboxChange}
-                disableCloseOnSelect
-                getOptionLabel={(option) => option}
-                renderOption={(props, option, { selected }) => (
-                  <li {...props}>
-                    <Checkbox checked={selected} style={{ marginRight: 8 }} />
-                    {option}
-                  </li>
-                )}
-                style={{ width: "100%" }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    label="Areas"
-                    multiline
-                    maxRows={4}
-                    minRows={4}
-                    size="small"
-                    // style={{ maxHeight: 150, overflowY: "auto" }}
-                  />
-                )}
-                ChipProps={{ size: "small" }} // Set size of the chips to small
-                renderTags={(value, getTagProps) => [
-                  ...value.map((option, index) => (
-                    <Chip
-                      key={index}
-                      label={option}
-                      {...getTagProps({ index })}
+            {filteredOptions?.length > 0 && (
+              <Box sx={{ maxHeight: 200, overflowY: "auto" }}>
+                {" "}
+                {/* Added maxHeight and overflow */}
+                <Autocomplete
+                  multiple
+                  options={filteredOptions}
+                  value={selectedareas}
+                  onChange={handleCheckboxChange}
+                  disableCloseOnSelect
+                  getOptionLabel={(option) => option}
+                  renderOption={(props, option, { selected }) => (
+                    <li {...props}>
+                      <Checkbox checked={selected} style={{ marginRight: 8 }} />
+                      {option}
+                    </li>
+                  )}
+                  style={{ width: "100%" }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      variant="outlined"
+                      label="Areas"
+                      multiline
+                      maxRows={4}
+                      minRows={4}
+                      size="small"
+                      // style={{ maxHeight: 150, overflowY: "auto" }}
                     />
-                  )),
-                ]}
-              />
-            </Box>
+                  )}
+                  ChipProps={{ size: "small" }} // Set size of the chips to small
+                  renderTags={(value, getTagProps) => [
+                    ...value.map((option, index) => (
+                      <Chip
+                        key={index}
+                        label={option}
+                        {...getTagProps({ index })}
+                      />
+                    )),
+                  ]}
+                />
+              </Box>
+            )}
 
             <Stack direction={"row"} justifyContent={"space-between"} mt={2}>
               <Button variant="outlined" onClick={handleSelectAll}>
@@ -209,7 +248,7 @@ function AddAccess({
               </Button>
               <Button
                 variant="contained"
-                disabled={selectedareas.length === 0}
+                disabled={selectedareas?.length === 0}
                 onClick={handleAddAreas}
                 sx={{
                   bgcolor: "black",

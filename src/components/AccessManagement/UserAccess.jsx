@@ -25,8 +25,8 @@ import {
   deleteAllAccess,
   deleteUserAccess,
   editAccess,
+  fetchMasterData,
 } from "../../apiCalls/Apicalls";
-import { accessData } from "../../assets/data";
 
 function UserAccess({
   open,
@@ -41,19 +41,44 @@ function UserAccess({
   setFilteredOptions,
   fetchEndUsersWithAccess,
 }) {
+  const [accessData, setAccessData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const category = "Orgx";
+
+  const fetchData = async () => {
+    try {
+      let config = {
+        headers: {
+          Authorization: Cookies.get("jwtToken"),
+          "Content-Type": "application/json",
+        },
+      };
+      const response = await axios.get(`${fetchMasterData}${category}`, config);
+      setAccessData(response.data);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const filteredOptions = accessData?.filter(
+      (option) => !areas?.includes(option)
+    );
+    setFilteredOptions(filteredOptions);
+  }, [areas]);
+
   useEffect(() => {
     if (selectedRow?.Access) {
       setAreas(selectedRow.Access);
     }
   }, [selectedRow]);
-
-  useEffect(() => {
-    const filteredOptions = accessData.filter(
-      (option) => !areas.includes(option)
-    );
-    setFilteredOptions(filteredOptions);
-  }, [areas]);
-
   const handleCheckboxChange = (event, value) => {
     setSelectedAreas(value);
   };
@@ -91,7 +116,7 @@ function UserAccess({
 
   const handleDeleteArea = async (area) => {
     try {
-      setAreas((prevAreas) => prevAreas.filter((a) => a !== area));
+      setAreas((prevAreas) => prevAreas?.filter((a) => a !== area));
       const config = {
         headers: {
           Authorization: Cookies.get("jwtToken"),
@@ -119,6 +144,10 @@ function UserAccess({
           Authorization: Cookies.get("jwtToken"),
           "Content-Type": "application/json",
         },
+        data: {
+          Access: [],
+          SpaceName: "", // include any necessary properties if required
+        },
       };
 
       const response = await axios.delete(
@@ -127,15 +156,19 @@ function UserAccess({
       );
 
       if (response.status === 200) {
-        toast.success("All Access Deleted Succesfully");
+        toast.success("All Access Deleted Successfully");
         onClose();
         fetchEndUsersWithAccess();
       }
     } catch (error) {
-      console.error("Error deleting area:", error);
+      console.error("Error deleting access:", error);
       toast.error("Failed to delete access");
     }
   };
+
+  console.log({ filteredOptions });
+  console.log({ selectedAreas });
+  console.log({ areas });
 
   return (
     <Drawer anchor="right" open={open} onClose={onClose}>
@@ -206,7 +239,7 @@ function UserAccess({
               </Stack>
             </Grid>
           </Grid>
-          {filteredOptions.length === 0 ? null : (
+          {filteredOptions?.length > 0 && (
             <Box px={3} py={2}>
               <Autocomplete
                 multiple
@@ -233,7 +266,7 @@ function UserAccess({
               />
               <Stack direction={"row"} justifyContent={"flex-end"} mt={2}>
                 <Button
-                  disabled={selectedAreas.length === 0}
+                  disabled={selectedAreas?.length === 0}
                   variant="contained"
                   onClick={handleAddAreas}
                   sx={{

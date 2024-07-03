@@ -1,40 +1,68 @@
-import { Box, Grid, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { accessData } from "../../assets/data";
+import { Box, Grid, Stack, Typography } from "@mui/material";
 import axios from "axios";
-import { getUsers, getUsersWithAccess } from "../../apiCalls/Apicalls";
+import Cookies from "js-cookie";
+import {
+  fetchMasterData,
+  getUsers,
+  getUsersWithAccess,
+} from "../../apiCalls/Apicalls";
 
 function Home() {
-  const [totalUsers, setTotalUsers] = useState();
-  const [userAccess, setUserAccess] = useState();
-  const totalAccess = accessData.length;
-  function fetchUsers() {
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [userAccess, setUserAccess] = useState(0);
+  const [accessData, setAccessData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const category = "Orgx";
+
+  const fetchData = async () => {
+    try {
+      let config = {
+        headers: {
+          Authorization: Cookies.get("jwtToken"),
+          "Content-Type": "application/json",
+        },
+      };
+      const response = await axios.get(`${fetchMasterData}${category}`, config);
+      setAccessData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchUsers = () => {
     axios
-      .get(`${getUsers}`)
+      .get(getUsers)
       .then((response) => {
-        setTotalUsers(response.data.length);
-        // Initially display all rows
+        setTotalUsers(response.data?.length);
       })
       .catch((error) => {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching users data:", error);
       });
-  }
-  function fetchuserwithaccess() {
+  };
+
+  const fetchUsersWithAccess = () => {
     axios
-      .get(`${getUsersWithAccess}`)
+      .get(getUsersWithAccess)
       .then((response) => {
-        setUserAccess(response.data.length);
-        // Initially display all rows
+        setUserAccess(response.data?.length);
       })
       .catch((error) => {
-        console.error("Error fetching user data:", error);
+        console.error("Error fetching users with access data:", error);
       });
-  }
+  };
+
   useEffect(() => {
-    // Fetch data from the API on component mount
+    fetchData();
     fetchUsers();
-    fetchuserwithaccess();
+    fetchUsersWithAccess();
   }, []);
+
+  const totalAccess = accessData ? accessData?.length : 0;
 
   const data = [
     {
@@ -50,6 +78,7 @@ function Home() {
       value: totalAccess,
     },
   ];
+
   return (
     <Box p={5} pt={3}>
       <Box
