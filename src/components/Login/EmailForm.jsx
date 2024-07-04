@@ -28,7 +28,7 @@ const EmailForm = ({ email, setEmail, formErrors, handleGetOTP, loading }) => {
   return (
     <Stack>
       <Typography variant="h6" fontWeight={600} m={"auto"}>
-        AuthX AUTHENTICATION
+        GET STARTED HERE
       </Typography>
       <Typography m={"auto"} pt={5}>
         Login with your email
