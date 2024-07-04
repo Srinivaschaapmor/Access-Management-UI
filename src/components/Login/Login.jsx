@@ -25,6 +25,26 @@ function Login() {
   const otpFields = useRef([]);
   const navigate = useNavigate();
   const [queryParameters] = useSearchParams();
+  const token = Cookies.get("jwtToken");
+
+  function handleLogin() {
+    const redirect_uri = queryParameters.get("redirect_uri");
+    if (!token) {
+      if (!redirect_uri) {
+        navigate("/");
+      }
+    } else {
+      if (redirect_uri) {
+        window.location.href = decodeURIComponent(redirect_uri);
+      } else if (window.location.pathname === "/") {
+        navigate("/dashboard/home");
+      }
+    }
+  }
+
+  useEffect(() => {
+    handleLogin();
+  }, []);
 
   const validateEmail = (email) => {
     const errors = {};

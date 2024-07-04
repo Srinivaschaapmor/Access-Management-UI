@@ -66,7 +66,7 @@ const OtpForm = ({
   return (
     <Stack>
       <Typography variant="h6" fontWeight={600} m={"auto"}>
-        AuthX AUTHENTICATION
+        GET STARTED HERE
       </Typography>
       <Typography m={"auto"} pt={5}>
         Enter the OTP
