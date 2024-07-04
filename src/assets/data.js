@@ -14,7 +14,7 @@ export const accessData = [
   "Recent_Openings_JobOpenings_View",
   "New_Recruitment_View_And_Write",
   "Write_FeedBack_View_And_Write",
-  "Recruitment_Status_View_And_Write",
+  "Recruitment_Status_View_And_write",
   "New_Job_Write",
   "Events_View",
   "Recent_Openings_View",

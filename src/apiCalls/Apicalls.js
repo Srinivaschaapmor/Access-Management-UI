@@ -10,3 +10,4 @@ export const updateUser = `${host}/users/update`;
 export const createUser = `${host}/create_user`;
 export const DeleteUser = `${host}/users/delete`;
 export const deleteUserAccess = `${host}/users/delete/access`;
+export const fetchMasterData = `${host}/masterdata/`;
