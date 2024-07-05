@@ -31,8 +31,8 @@ function Header() {
   };
   const handleLogout = () => {
     // Implement your logout logic here
-    Cookies.remove("jwtToken");
-    Cookies.remove("userEmail");
+    Cookies.remove("jwtToken", { domain: process.env.REACT_APP_COOKIES_DOMAIN, path: "/" });
+    Cookies.remove("userEmail", { domain: process.env.REACT_APP_COOKIES_DOMAIN, path: "/" });
     navigate("/");
     console.log("Logged out");
     handlePopperClose();
