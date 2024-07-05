@@ -49,8 +49,7 @@ function Login() {
   const validateEmail = (email) => {
     const errors = {};
     const trimmedEmail = email.trim();
-    const regex =
-      /^[a-zA-Z._%+-][a-zA-Z0-9._%+-]*@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    const regex = /^[a-zA-Z._%+-][a-zA-Z0-9._%+-]*@[a-zA-Z]+\.[a-zA-Z]{2,}$/;
 
     if (!trimmedEmail) {
       errors.email = "Field is required";
