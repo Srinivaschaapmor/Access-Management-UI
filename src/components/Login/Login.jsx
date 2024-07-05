@@ -143,19 +143,19 @@ function Login() {
           const redirect_uri = queryParameters.get("redirect_uri");
           const access = response.data.access;
           Cookies.set("jwtToken", jwtToken, {
-            expires: 1 / 12,
+            // expires: 1 / 12,
             domain: process.env.REACT_APP_COOKIES_DOMAIN,
             path: "/",
           });
           Cookies.set("userEmail", useremail, {
             domain: process.env.REACT_APP_COOKIES_DOMAIN,
             path: "/",
-            expires: 1 / 12,
+            // expires: 1 / 12,
           });
           Cookies.set("access", JSON.stringify(access), {
             domain: process.env.REACT_APP_COOKIES_DOMAIN,
             path: "/",
-            expires: 1 / 12,
+            // expires: 1 / 12,
           });
           if (redirect_uri) {
             window.location.href = decodeURIComponent(redirect_uri);
