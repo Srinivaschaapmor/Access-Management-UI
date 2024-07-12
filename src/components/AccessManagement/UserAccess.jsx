@@ -25,6 +25,7 @@ import {
   deleteAllAccess,
   deleteUserAccess,
   editAccess,
+  fetchLabelsMasterData,
   fetchMasterData,
 } from "../../apiCalls/Apicalls";
 
@@ -54,7 +55,10 @@ function UserAccess({
           "Content-Type": "application/json",
         },
       };
-      const response = await axios.get(`${fetchMasterData}${category}`, config);
+      const response = await axios.get(
+        `${fetchLabelsMasterData}${category}`,
+        config
+      );
       setAccessData(response.data);
     } catch (error) {
       setError(error);

@@ -20,6 +20,7 @@ import Cookies from "js-cookie";
 import {
   deleteAllAccess,
   editAccess,
+  fetchLabelsMasterData,
   fetchMasterData,
 } from "../../apiCalls/Apicalls";
 
@@ -51,7 +52,7 @@ function AddAccess({
           },
         };
         const response = await axios.get(
-          `${fetchMasterData}${category}`,
+          `${fetchLabelsMasterData}${category}`,
           config
         );
         setAccessData(response.data);
